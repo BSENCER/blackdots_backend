@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackDots - Blog</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Work+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=202602241211">
+    <link rel="stylesheet" href="css/mobile-responsive.css?v=202602241211">
+    <style>
+        .blog-hero {
+            background:
+                radial-gradient(circle at 20% 20%, rgba(135, 90, 123, 0.3), transparent 35%),
+                linear-gradient(135deg, var(--color-black) 0%, var(--color-gray-dark) 100%);
+            padding: 9rem 1rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog-hero h1 {
+            color: var(--color-white);
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .blog-hero p {
+            color: rgba(255, 255, 255, 0.72) !important;
+            font-size: 1rem;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.75rem;
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 5rem 1.25rem 6rem;
+        }
+
+        .blog-card {
+            display: flex;
+            flex-direction: column;
+            background: var(--color-white);
+            border: 1px solid rgba(113, 75, 103, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(10, 10, 10, 0.07);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(113, 75, 103, 0.3);
+            box-shadow: 0 18px 36px rgba(10, 10, 10, 0.14);
+        }
+
+        .blog-image {
+            height: 220px;
+            background: linear-gradient(135deg, #f1edf2, #e6dce5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .blog-card:hover .blog-image img {
+            transform: scale(1.05);
+        }
+
+        .blog-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            color: var(--color-purple);
+            background: linear-gradient(135deg, #f5f1f5, #e9e0e8);
+            opacity: 0.65;
+        }
+
+        .blog-content {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            padding: 1.4rem 1.5rem 1.5rem;
+        }
+
+        .blog-meta {
+            font-size: 0.85rem;
+            color: #777;
+            margin-bottom: 0.9rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem 0.8rem;
+            line-height: 1.4;
+        }
+
+        .blog-meta span {
+            white-space: nowrap;
+        }
+
+        .blog-card h3 {
+            color: var(--color-black);
+            margin-bottom: 0.65rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            line-height: 1.3;
+        }
+
+        .blog-excerpt {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.35rem;
+            line-height: 1.6;
+        }
+
+        .read-more {
+            color: #714B67;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: auto;
+            transition: color 0.2s ease;
+        }
+
+        .read-more:hover {
+            color: var(--color-purple-dark);
+        }
+
+        @media (max-width: 900px) {
+            .blog-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .blog-grid {
+                grid-template-columns: 1fr;
+                padding-top: 3rem;
+            }
+
+            .blog-image {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Black<span>Dots</span></a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Ana Səhifə</a></li>
+                <li><a href="services.html">Xidmətlər</a></li>
+                <li><a href="tekliflerimiz.html">Təkliflərimiz</a></li>
+                <li><a href="apps.html">Odoo Apps</a></li>
+                <li><a href="about.html">Haqqımızda</a></li>
+                <li><a href="blog.html" class="active">Blog</a></li>
+                <li><a href="contact.html">Əlaqə</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="blog-hero">
+        <h1>Blog & Xəbərlər</h1>
+        <p style="color: white;">Ən son yeniliklər və məqalələrimiz</p>
+    </section>
+
+    <!-- Blog Grid -->
+    <div class="blog-grid" id="blogGrid">
+        <!-- Blogs will be loaded here -->
+        <div style="text-align: center; width: 100%; grid-column: 1 / -1;">
+            Yüklənir...
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <div class="footer-brand">Black<span>Dots</span></div>
+                <p class="footer-about">
+                    Azərbaycanda lider Odoo Ready Partner. Biznes proseslərinin
+                    rəqəmsallaşdırılması və optimallaşdırılması sahəsində ekspert.
+                </p>
+                <div class="odoo-badge">ODOO READY PARTNER</div>
+            </div>
+            <div class="footer-section">
+                <h4>Şirkət</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">Haqqımızda</a></li>
+                    <li><a href="#">Komanda</a></li>
+                    <li><a href="careers.html">Karyera</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Xidmətlər</h4>
+                <ul class="footer-links">
+                    <li><a href="services.html">İmplementasiya</a></li>
+                    <li><a href="services.html">Fərdiləşdirmə</a></li>
+                    <li><a href="services.html">Təlim</a></li>
+                    <li><a href="services.html">Dəstək</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Əlaqə</h4>
+                <ul class="footer-links">
+                    <li><a href="mailto:info@blackdots.az">info@blackdots.az</a></li>
+                    <li><a href="tel:+994512051115">+994 51 205 11 15</a></li>
+                    <li><a href="contact.html">Bakı, Azərbaycan</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 BlackDots. Bütün hüquqlar qorunur.</p>
+        </div>
+    </footer>
+    <script src="js/api-config.js?v=3"></script>
+    <script src="js/script.js?v=3"></script>
+</body>
+
+</html>

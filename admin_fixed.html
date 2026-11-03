@@ -1,0 +1,2623 @@
+�
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackDots - Admin Panel</title>
+    <style>
+        /* ... existing styles ... */
+        .image-preview-container {
+            margin-top: 10px;
+            width: 100px;
+            height: 100px;
+            border: 1px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+
+        .image-preview-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ... HTML content ... -->
+
+    <script>
+        const API_URL = 'https://blackdots-2.onrender.com/api';
+
+        // Image Upload Function
+        async function uploadImage(fileInput) {
+            const file = fileInput.files[0];
+            if (!file) return null;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // Show uploading state
+                const container = fileInput.parentElement;
+                const statusSpan = container.querySelector('.upload-status') || document.createElement('span');
+                statusSpan.className = 'upload-status';
+                statusSpan.textContent = ' �?� Yükl�"nir...';
+                statusSpan.style.color = 'orange';
+                if (!container.contains(statusSpan)) container.appendChild(statusSpan);
+
+                const response = await fetch(`${API_URL}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Upload failed');
+
+                const data = await response.json();
+
+                // Update status
+                statusSpan.textContent = ' �S& Hazırdır';
+                statusSpan.style.color = 'green';
+                setTimeout(() => statusSpan.remove(), 2000);
+
+                return data.url;
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('�~�"kil yükl�"n�"rk�"n x�"ta ba�x verdi.');
+                return null;
+            }
+        }
+
+        // Handle Image Input Change
+        function setupImageUpload(inputElement, hiddenInputId, previewContainerId) {
+            inputElement.addEventListener('change', async function () {
+                const url = await uploadImage(this);
+                if (url) {
+                    document.getElementById(hiddenInputId).value = url;
+
+                    // Update preview
+                    const previewContainer = document.getElementById(previewContainerId);
+                    if (previewContainer) {
+                        previewContainer.innerHTML = `<img src="${url}" alt="Preview">`;
+                    }
+                }
+            });
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .navbar {
+            background: #714B67;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.8rem;
+        }
+
+        .container {
+            max-width: 1600px;
+            width: 95%;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: #714B67;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #714B67;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a3a52;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #714B67;
+            box-shadow: 0 0 0 3px rgba(113, 75, 103, 0.1);
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
+        }
+
+        .phase-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .phase-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid #714B67;
+        }
+
+        .phase-card h3 {
+            margin-bottom: 0.5rem;
+            color: #714B67;
+        }
+
+        .phase-card p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .phase-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .phase-actions button {
+            flex: 1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .points-input {
+            margin-top: 0.5rem;
+        }
+
+        .point-item {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .point-item input {
+            flex: 1;
+        }
+
+        .point-item button {
+            padding: 0.75rem 1rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .point-item button:hover {
+            background: #c0392b;
+        }
+
+        .add-point-btn {
+            padding: 0.75rem;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .add-point-btn:hover {
+            background: #229954;
+        }
+
+        /* Tab Styles - Carousel Mode */
+        .admin-tabs {
+            display: flex;
+            flex-wrap: nowrap;
+            /* No wrapping */
+            overflow-x: auto;
+            /* Enable horizontal scroll */
+            gap: 0.5rem;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
+            /* Smooth scroll on mobile */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .admin-tabs::-webkit-scrollbar {
+            display: none;
+            /* Safari and Chrome */
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: -0.5rem;
+            /* Connect to border */
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            /* Prevent shrinking */
+            white-space: nowrap;
+            /* Keep text on one line */
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .tab-button:hover {
+            color: #714B67;
+            background: #f9f9f9;
+        }
+
+        .tab-button.active {
+            color: white;
+            background: #714B67;
+            border-color: #714B67;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Messages Table Styles */
+        .messages-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .messages-table th,
+        .messages-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .messages-table th {
+            background: #f8f8f8;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .messages-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .message-row.unread {
+            background: #fffbf0;
+            font-weight: 500;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .message-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .message-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .message-detail h3 {
+            margin-bottom: 1rem;
+            color: #714B67;
+        }
+
+        .message-detail-row {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .message-detail-row strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #714B67;
+        }
+    </style>
+    <div class="navbar">
+        <h1>�x:��? BlackDots Admin Panel</h1>
+        <p>Methodology Fazaları İdar�" Et</p>
+    </div>
+
+    <div class="container">
+        <div id="message"></div>
+
+        <!-- Tabs Navigation -->
+        <div class="admin-tabs">
+            <button class="tab-button active" onclick="switchTab('phases')">�x` Metodoloji Fazalar</button>
+            <button class="tab-button" onclick="switchTab('messages')">�x� �?laq�" Mesajları</button>
+            <button class="tab-button" onclick="switchTab('faqs')">� Tez-tez Veril�"n Suallar</button>
+            <button class="tab-button" onclick="switchTab('vacancies')">�x� Vakansiyalar</button>
+            <button class="tab-button" onclick="switchTab('services')">�a"�? Xidm�"tl�"r</button>
+            <button class="tab-button" onclick="switchTab('team')">�x� Komanda</button>
+            <button class="tab-button" onclick="switchTab('apps')">�x� T�"tbiql�"r</button>
+            <button class="tab-button" onclick="switchTab('testimonials')">� R�"yl�"r</button>
+            <button class="tab-button" onclick="switchTab('partners')">�x�� T�"r�"fda�xlar</button>
+            <button class="tab-button" onclick="switchTab('industries')">�x�� S�"nayel�"r</button>
+            <button class="tab-button" onclick="switchTab('blogs')">�x� Blog</button>
+        </div>
+
+        <!-- Phases Tab -->
+        <div id="phases" class="tab-content active">
+            <button class="btn btn-primary" onclick="openAddModal()">+ Yeni Faza �?lav�" Et</button>
+            <h2 class="section-title">Fazaları İdar�" Et</h2>
+            <div id="phasesList" class="phase-list"></div>
+        </div>
+
+        <!-- Messages Tab -->
+        <div id="messages" class="tab-content">
+            <h2 class="section-title">�?laq�" Mesajları</h2>
+            <div id="messagesList" style="overflow-x: auto;">
+                <table class="messages-table">
+                    <thead>
+                        <tr>
+                            <th>Ad</th>
+                            <th>Email</th>
+                            <th>Telefon</th>
+                            <th>Xidm�"t</th>
+                            <th>Tarix</th>
+                            <th>�?m�"liyyatlar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messagesTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FAQs Tab -->
+        <div id="faqs" class="tab-content">
+            <button class="btn btn-primary" onclick="openAddFaqModal()">+ Yeni Sual �?lav�" Et</button>
+            <h2 class="section-title">Tez-tez Veril�"n Suallar</h2>
+            <div id="faqsList" class="phase-list"></div>
+        </div>
+
+        <!-- Vacancies Tab -->
+        <div id="vacancies" class="tab-content">
+            <button class="btn btn-primary" onclick="openAddVacancyModal()">+ Yeni Vakansiya �?lav�" Et</button>
+            <h2 class="section-title">Açıq Vakansiyalar</h2>
+            <div id="vacanciesList" class="phase-list"></div>
+        </div>
+
+        <!-- Applications Tab -->
+        <div id="applications" class="tab-content">
+            <h2 class="section-title">Müraci�"tl�"r</h2>
+            <div style="margin-bottom: 1rem;">
+                <label for="applicationFilter" style="display: inline; margin-right: 0.5rem;">Filtr:</label>
+                <select id="applicationFilter" onchange="loadApplications()" style="padding: 0.5rem;">
+                    <option value="">Hamısı</option>
+                    <option value="pending">Gözl�"m�"d�"</option>
+                    <option value="reviewed">N�"z�"rd�"n Keçirildi</option>
+                    <option value="rejected">R�"dd Edildi</option>
+                </select>
+            </div>
+            <div id="applicationsList" class="phase-list"></div>
+        </div>
+
+        <!-- Services Tab -->
+        <div id="services" class="tab-content">
+            <button class="btn btn-primary" onclick="openServiceModal()">+ Yeni Xidm�"t �?lav�" Et</button>
+            <h2 class="section-title">Xidm�"tl�"r</h2>
+            <div id="servicesList" class="phase-list"></div>
+        </div>
+
+        <!-- Team Tab -->
+        <div id="team" class="tab-content">
+            <button class="btn btn-primary" onclick="openTeamModal()">+ Yeni �Szv �?lav�" Et</button>
+            <h2 class="section-title">Komanda</h2>
+            <div id="teamList" class="phase-list"></div>
+        </div>
+
+        <!-- Apps Tab -->
+        <div id="apps" class="tab-content">
+            <button class="btn btn-primary" onclick="openAppModal()">+ Yeni T�"tbiq �?lav�" Et</button>
+            <h2 class="section-title">T�"tbiql�"r</h2>
+            <div id="appsList" class="phase-list"></div>
+        </div>
+
+        <!-- Testimonials Tab -->
+        <div id="testimonials" class="tab-content">
+            <button class="btn btn-primary" onclick="openTestimonialModal()">+ Yeni R�"y �?lav�" Et</button>
+            <h2 class="section-title">Mü�xt�"ri R�"yl�"ri</h2>
+            <div id="testimonialsList" class="phase-list"></div>
+        </div>
+
+        <!-- Partners Tab -->
+        <div id="partners" class="tab-content">
+            <button class="btn btn-primary" onclick="openPartnerModal()">+ Yeni T�"r�"fda�x �?lav�" Et</button>
+            <h2 class="section-title">T�"r�"fda�xlar v�" Mü�xt�"ril�"r</h2>
+            <div id="partnersList" class="phase-list"
+                style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));"></div>
+        </div>
+
+        <!-- Industries Tab -->
+        <div id="industries" class="tab-content">
+            <button class="btn btn-primary" onclick="openIndustryModal()">+ Yeni S�"naye �?lav�" Et</button>
+            <h2 class="section-title">S�"nayel�"r</h2>
+            <div id="industriesList" class="phase-list"></div>
+        </div>
+
+        <!-- Blogs Tab -->
+        <div id="blogs" class="tab-content">
+            <button class="btn btn-primary" onclick="openBlogModal()">+ Yeni Blog �?lav�" Et</button>
+            <h2 class="section-title">Blog Yazıları</h2>
+            <div id="blogsList" class="phase-list"></div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Yeni Faza �?lav�" Et</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+
+            <form id="phaseForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="phaseId">Faza ID (İngilis, heç bo�xluq)*</label>
+                    <input type="text" id="phaseId" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phaseTitle">Ba�xlıq*</label>
+                    <input type="text" id="phaseTitle" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phaseSubtitle">Alt Ba�xlıq*</label>
+                    <input type="text" id="phaseSubtitle" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phaseIcon">İkon (Emoji)*</label>
+                    <input type="text" id="phaseIcon" placeholder="�x`" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phaseDesc1">Açıqlama 1*</label>
+                    <textarea id="phaseDesc1" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="phaseDesc2">Açıqlama 2</label>
+                    <textarea id="phaseDesc2"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="phaseButtonText">Düym�" M�"tni*</label>
+                    <input type="text" id="phaseButtonText" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Nöqt�"l�"r*</label>
+                    <div id="pointsList" class="points-input"></div>
+                    <button type="button" class="add-point-btn" onclick="addPointInput()">+ Nöqt�" �?lav�" Et</button>
+                </div>
+
+                <div class="form-group">
+                    <label for="phaseOrder">Sıra</label>
+                    <input type="number" id="phaseOrder" value="1" min="1">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">Yadda Saxla</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeModal()">L�"�xv
+                        Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message Detail Modal -->
+    <div id="messageModal" class="message-modal">
+        <div class="message-modal-content">
+            <div class="message-detail">
+                <h3>Mesaj Detalları</h3>
+                <div class="message-detail-row">
+                    <strong>Ad:</strong>
+                    <span id="messageDetailName"></span>
+                </div>
+                <div class="message-detail-row">
+                    <strong>Email:</strong>
+                    <span id="messageDetailEmail"></span>
+                </div>
+                <div class="message-detail-row">
+                    <strong>�~irk�"t:</strong>
+                    <span id="messageDetailCompany"></span>
+                </div>
+                <div class="message-detail-row">
+                    <strong>Telefon:</strong>
+                    <span id="messageDetailPhone"></span>
+                </div>
+                <div class="message-detail-row">
+                    <strong>Xidm�"t:</strong>
+                    <span id="messageDetailService"></span>
+                </div>
+                <div class="message-detail-row">
+                    <strong>Tarix:</strong>
+                    <span id="messageDetailDate"></span>
+                </div>
+                <div class="message-detail-row">
+                    <strong>Mesaj:</strong>
+                    <p id="messageDetailText" style="white-space: pre-wrap; margin: 0.5rem 0; color: #666;"></p>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-secondary" onclick="closeMessageModal()">Ba�xla</button>
+                    <button class="btn btn-danger" onclick="deleteMessage()" style="background: #e74c3c;">Sil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Add/Edit Modal -->
+    <div id="faqModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="faqModalTitle">Yeni Sual �?lav�" Et</h2>
+                <button class="close-btn" onclick="closeFaqModal()">&times;</button>
+            </div>
+
+            <form id="faqForm" onsubmit="handleFaqSubmit(event)">
+                <div class="form-group">
+                    <label for="faqQuestion">Sual*</label>
+                    <input type="text" id="faqQuestion" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="faqAnswer">Cavab*</label>
+                    <textarea id="faqAnswer" required rows="5"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="faqOrder">Sıra</label>
+                    <input type="number" id="faqOrder" value="1" min="1">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">Yadda Saxla</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeFaqModal()">L�"�xv
+                        Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Vacancy Add/Edit Modal -->
+    <div id="vacancyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="vacancyModalTitle">Yeni Vakansiya �?lav�" Et</h2>
+                <button class="close-btn" onclick="closeVacancyModal()">&times;</button>
+            </div>
+
+            <form id="vacancyForm" onsubmit="handleVacancySubmit(event)">
+                <div class="form-group">
+                    <label for="vacancyTitle">V�"zif�" Adı *</label>
+                    <input type="text" id="vacancyTitle" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="vacancyType">Tip *</label>
+                    <select id="vacancyType" required>
+                        <option value="Tam Vaxt">Tam Vaxt</option>
+                        <option value="Yarım Vaxt">Yarım Vaxt</option>
+                        <option value="Müqavil�"">Müqavil�" </option>
+                        <option value="Praktikant">Praktikant</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="vacancyLocation">�~�"h�"r *</label>
+                    <input type="text" id="vacancyLocation" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="vacancySalary">Maa�x *</label>
+                    <input type="text" id="vacancySalary" placeholder="örn: $1500 - $2500" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="vacancyExperience">T�"l�"b olunan T�"crüb�" *</label>
+                    <input type="text" id="vacancyExperience" placeholder="örn: 2+ il" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="vacancyDescription">T�"svir *</label>
+                    <textarea id="vacancyDescription" required style="min-height: 150px;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="vacancyOrder">Sıra</label>
+                    <input type="number" id="vacancyOrder" value="1" min="1">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">Yadda Saxla</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;"
+                        onclick="closeVacancyModal()">L�"�xv
+                        Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Service Add/Edit Modal -->
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="serviceModalTitle">Yeni Xidm�"t �?lav�" Et</h2>
+                <button class="close-btn" onclick="closeServiceModal()">&times;</button>
+            </div>
+            <form id="serviceForm" onsubmit="handleServiceSubmit(event)">
+                <div class="form-group">
+                    <label for="serviceTitle">Ba�xlıq *</label>
+                    <input type="text" id="serviceTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="serviceIcon">İkon (Emoji) *</label>
+                    <input type="text" id="serviceIcon" required placeholder="�a" �?">
+                </div>
+                <div class="form-group">
+                    <label for="serviceDescription">T�"svir *</label>
+                    <textarea id="serviceDescription" required rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="serviceOrder">Sıra</label>
+                    <input type="number" id="serviceOrder" value="1" min="1">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">Yadda Saxla</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;"
+                        onclick="closeServiceModal()">L�"�xv
+                        Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Team Add/Edit Modal -->
+    <div id="teamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="teamModalTitle">Yeni �Szv �?lav�" Et</h2>
+                <button class="close-btn" onclick="closeTeamModal()">&times;</button>
+            </div>
+            <form id="teamForm" onsubmit="handleTeamSubmit(event)">
+                <div class="form-group">
+                    <label for="teamName">Ad Soyad *</label>
+                    <input type="text" id="teamName" required>
+                </div>
+                <div class="form-group">
+                    <label for="teamPosition">V�"zif�" *</label>
+                    <input type="text" id="teamPosition" required>
+                </div>
+                <div class="form-group">
+                    <label>�~�"kil</label>
+                    <div class="upload-controls">
+                        <input type="file" id="teamImageFile" accept="image/*">
+                        <span class="upload-status"></span>
+                    </div>
+                    <input type="hidden" id="teamImage">
+                    <div id="teamImagePreview" class="image-preview-container"></div>
+                </div>
+                <div class="form-group">
+                    <label for="teamBio">Bio</label>
+                    <textarea id="teamBio" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="teamOrder">Sıra</label>
+                    <input type="number" id="teamOrder" value="1" min="1">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">Yadda Saxla</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeTeamModal()">L�"�xv
+                        Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- App Add/Edit Modal -->
+    <div id="appModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="appModalTitle">Yeni T�"tbiq �?lav�" Et</h2>
+                <button class="close-btn" onclick="closeAppModal()">&times;</button>
+            </div>
+            <form id="appForm" onsubmit="handleAppSubmit(event)">
+                <div class="form-group">
+                    <label for="appName">Ad *</label>
+                    <input type="text" id="appName" required>
+                </div>
+                <div class="form-group">
+                    <label for="appCategory">Kateqoriya *</label>
+                    <select id="appCategory" required>
+                        <option value="Satı�x">Satı�x</option>
+                        <option value="Maliyy�"">Maliyy�" </option>
+                        <option value="İnventar v�" İstehsalat">İnventar v�" İstehsalat</option>
+                        <option value="İnsan Resursları (HR)">İnsan Resursları (HR)</option>
+                        <option value="Marketinq">Marketinq</option>
+                        <option value="Xidm�" tl�"r">Xidm�"tl�"r</option>
+                        <option value="Dig�" r">Dig�"r</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appIcon">İkon (Emoji) *</label>
+                    <input type="text" id="appIcon" required placeholder="�x�">
+                </div>
+                <div class="form-group">
+                    <label for="appDescription">T�"svir *</label>
+                    <textarea id="appDescription" required rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="appFeatures">Xüsusiyy�"tl�"r (H�"r s�"tird�" birini yazın)</label>
+                    <textarea id="appFeatures" rows="5" placeholder="Qaim�" l�"rin yaradılması&#10;Bank
+                        inteqrasiyası"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="appOrder">Sıra</label>
+                    <input type="number" id="appOrder" value="1" min="1">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">Yadda Saxla</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeAppModal()">L�"�xv
+                        Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Testimonial Add/Edit Modal -->
+    <div id="testimonialModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="testimonialModalTitle">Yeni R�"y �?lav�" Et</h2>
+                <button class="close-btn" onclick="closeTestimonialModal()">&times;</button>
+            </div>
+            <form id="testimonialForm" onsubmit="handleTestimonialSubmit(event)">
+                <div class="form-group">
+                    <label for="testAuthor">Mü�"llif *</label>
+                    <input type="text" id="testAuthor" required>
+                </div>
+                <div class="form-group">
+                    <label for="testPosition">V�"zif�" *</label>
+                    <input type="text" id="testPosition" required placeholder="CEO, TechCorp">
+                </div>
+                <div class="form-group">
+                    <label for="testQuote">R�"y *</label>
+                    <textarea id="testQuote" required rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="testOrder">Sıra</label>
+                    <input type="number" id="testOrder" value="1" min="1">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">Yadda Saxla</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;"
+                        onclick="closeTestimonialModal()">L�"�xv Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Partner Add/Edit Modal -->
+    <div id="partnerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="partnerModalTitle">Yeni T�"r�"fda�x �?lav�" Et</h2>
+                <button class="close-btn" onclick="closePartnerModal()">&times;</button>
+            </div>
+            <form id="partnerForm" onsubmit="handlePartnerSubmit(event)">
+                <div class="form-group">
+                    <label for="partnerName">Ad *</label>
+                    <input type="text" id="partnerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="partnerType">Tip *</label>
+                    <select id="partnerType" required>
+                        <option value="partner">T�"r�"fda�x (Partner)</option>
+                        <option value="client">Mü�xt�"ri (Client)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Logo *</label>
+                    <div class="upload-controls">
+                        <input type="file" id="partnerLogoFile" accept="image/*">
+                        <span class="upload-status"></span>
+                    </div>
+                    <input type="hidden" id="partnerLogo">
+                    <div id="partnerLogoPreview" class="image-preview-container"></div>
+                </div>
+                <div class="form-group">
+                    <label for="partnerOrder">Sıra</label>
+                    <input type="number" id="partnerOrder" value="1" min="1">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">Yadda Saxla</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;"
+                        onclick="closePartnerModal()">L�"�xv
+                        Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Industry Add/Edit Modal -->
+    <div id="industryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="industryModalTitle">Yeni S�"naye �?lav�" Et</h2>
+                <button class="close-btn" onclick="closeIndustryModal()">&times;</button>
+            </div>
+            <form id="industryForm" onsubmit="handleIndustrySubmit(event)">
+                <div class="form-group">
+                    <label for="industryName">Ad *</label>
+                    <input type="text" id="industryName" required>
+                </div>
+                <div class="form-group">
+                    <label for="industryIcon">İkon (Emoji) *</label>
+                    <input type="text" id="industryIcon" required placeholder="�x��">
+                </div>
+                <div class="form-group">
+                    <label for="industryDescription">T�"svir *</label>
+                    <textarea id="industryDescription" required rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="industryOrder">Sıra</label>
+                    <input type="number" id="industryOrder" value="1" min="1">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">Yadda Saxla</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;"
+                        onclick="closeIndustryModal()">L�"�xv
+                        Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Blog Add/Edit Modal -->
+    <div id="blogModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="blogModalTitle">Yeni Blog �?lav�" Et</h2>
+                <button class="close-btn" onclick="closeBlogModal()">&times;</button>
+            </div>
+            <form id="blogForm" onsubmit="handleBlogSubmit(event)">
+                <div class="form-group">
+                    <label for="blogTitle">Ba�xlıq *</label>
+                    <input type="text" id="blogTitle" required oninput="generateSlug(this.value)">
+                </div>
+                <div class="form-group">
+                    <label for="blogSlug">Slug (URL hiss�"si) *</label>
+                    <input type="text" id="blogSlug" required>
+                </div>
+                <div class="form-group">
+                    <label for="blogAuthor">Mü�"llif</label>
+                    <input type="text" id="blogAuthor" value="Admin">
+                </div>
+                <div class="form-group">
+                    <label for="blogCategory">Kateqoriya (Opsional)</label>
+                    <input type="text" id="blogCategory" placeholder="MYs: Texnologiya" list="categoryList">
+                    <datalist id="categoryList">
+                        <option value="�mumi">
+                        <option value="Texnologiya">
+                        <option value="XYbYrlYr">
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label for="blogExcerpt">Q1sa MYzmun *</label>
+                    <textarea id="blogExcerpt" required rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="blogContent">Tam MYzmun (HTML DYstYklYnir)</label>
+                    <textarea id="blogContent" rows="10"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>^Ykil</label>
+                    <div class="upload-controls">
+                        <input type="file" id="blogImageFile" accept="image/*">
+                        <span class="upload-status"></span>
+                    </div>
+                    <input type="hidden" id="blogImage">
+                    <div id="blogImagePreview" class="image-preview-container"></div>
+                </div>
+                <div class="form-group">
+                    <label for="blogIcon">İkon (Emoji)</label>
+                    <input type="text" id="blogIcon" value="📰" maxlength="4"
+                        placeholder="Məsələn: 🚀, 💡, 📈">
+                    <small style="color:#777;">Şəkil olmayanda bu ikon kartda göstərilir.</small>
+                </div>
+                <div class="form-group">
+                    <label>Video (Opsional)</label>
+                    <div class="upload-controls">
+                        <input type="file" id="blogVideoFile" accept="video/*">
+                        <span class="upload-status"></span>
+                    </div>
+                    <input type="hidden" id="blogVideo">
+                    <div id="blogVideoPreview" class="image-preview-container"
+                        style="width: 200px; height: auto; border: none;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="blogFeatured" style="width: auto;">
+                        Seçilmi�x (Featured)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="blogOrder">Sıra</label>
+                    <input type="number" id="blogOrder" value="1" min="1">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">Yadda Saxla</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeBlogModal()">L�"�xv
+                        Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+        let currentPhaseId = null;
+        let currentMessageId = null;
+        let currentServiceId = null;
+        let currentTeamId = null;
+        let currentAppId = null;
+        let currentTestimonialId = null;
+        let currentPartnerId = null;
+        let currentIndustryId = null;
+        let currentBlogId = null;
+        let fetchedBlog = null;
+
+        // Load phases, messages, and FAQs on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPhases();
+            loadMessages();
+            loadFaqs();
+            loadVacancies();
+            loadApplications();
+            loadServices();
+            loadTeam();
+            loadApps();
+            loadTestimonials();
+            loadPartners();
+            loadIndustries();
+            loadBlogs();
+
+            // Setup Image Uploads
+            setupImageUpload(document.getElementById('blogImageFile'), 'blogImage', 'blogImagePreview');
+            setupImageUpload(document.getElementById('blogVideoFile'), 'blogVideo', 'blogVideoPreview');
+            setupImageUpload(document.getElementById('teamImageFile'), 'teamImage', 'teamImagePreview');
+            setupImageUpload(document.getElementById('partnerLogoFile'), 'partnerLogo', 'partnerLogoPreview');
+        });
+
+        // Tab switching function
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            const tab = document.getElementById(tabName);
+            if (tab) tab.classList.add('active');
+
+            // Highlight button
+            if (event && event.type === 'click' && event.target.classList.contains('tab-button')) {
+                event.target.classList.add('active');
+            } else {
+                const btn = Array.from(document.querySelectorAll('.tab-button'))
+                    .find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${tabName}'`));
+                if (btn) btn.classList.add('active');
+            }
+
+            // Load content
+            if (tabName === 'messages') loadMessages();
+            else if (tabName === 'faqs') loadFaqs();
+            else if (tabName === 'vacancies') loadVacancies();
+            else if (tabName === 'applications') loadApplications();
+            else if (tabName === 'services') loadServices();
+            else if (tabName === 'team') loadTeam();
+            else if (tabName === 'apps') loadApps();
+            else if (tabName === 'testimonials') loadTestimonials();
+            else if (tabName === 'partners') loadPartners();
+            else if (tabName === 'industries') loadIndustries();
+            else if (tabName === 'blogs') loadBlogs();
+        }
+
+        async function loadPhases() {
+            try {
+                console.log('Admin: Fazalar yükl�"nir...', API_URL + '/phases');
+                const response = await fetch(`${API_URL}/phases`);
+
+                if (!response.ok) {
+                    showMessage('API x�"tası: ' + response.status + ' ' + response.statusText, 'error');
+                    return;
+                }
+
+                const data = await response.json();
+                console.log('Admin: API cavabı:', data);
+
+                if (!Array.isArray(data)) {
+                    showMessage('API array dönd�"rm�"di: ' + typeof data, 'error');
+                    return;
+                }
+
+                displayPhases(data);
+            } catch (error) {
+                console.error('Admin: X�"ta:', error);
+                showMessage('Fazaları yükl�"m�"d�" x�"ta: ' + error.message, 'error');
+            }
+        }
+
+        function displayPhases(phases) {
+            const container = document.getElementById('phasesList');
+
+            if (!container) {
+                console.error('phasesList elementini tapmadı!');
+                return;
+            }
+
+            container.innerHTML = '';
+
+            if (!Array.isArray(phases)) {
+                console.error('displayPhases: phases array deyil:', typeof phases);
+                container.innerHTML = '<p>M�"lumat formatı x�"tadır</p>';
+                return;
+            }
+
+            if (phases.length === 0) {
+                container.innerHTML = '<p>Faza tapılmadı</p>';
+                return;
+            }
+
+            phases.forEach(phase => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.innerHTML = `
+                    <h3>${phase.icon} ${phase.title}</h3>
+                    <p><strong>${phase.subtitle}</strong></p>
+                    <p>${phase.description.substring(0, 100)}...</p>
+                    <div class="phase-actions">
+                        <button class="btn btn-primary" onclick="editPhase('${phase.id}')">Redakt�" Et</button>
+                        <button class="btn btn-danger" onclick="deletePhase('${phase.id}')">Sil</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openAddModal() {
+            currentPhaseId = null;
+            document.getElementById('modalTitle').textContent = 'Yeni Faza �?lav�" Et';
+            document.getElementById('phaseForm').reset();
+            document.getElementById('phaseId').disabled = false;
+            document.getElementById('pointsList').innerHTML = '';
+            addPointInput();
+            document.getElementById('modal').classList.add('active');
+        }
+
+        async function editPhase(id) {
+            try {
+                const response = await fetch(`${API_URL}/phases/${id}`);
+                const phase = await response.json();
+
+                currentPhaseId = id;
+                document.getElementById('modalTitle').textContent = 'Faza Redakt�" Et';
+                document.getElementById('phaseId').value = phase.id;
+                document.getElementById('phaseId').disabled = true;
+                document.getElementById('phaseTitle').value = phase.title;
+                document.getElementById('phaseSubtitle').value = phase.subtitle;
+                document.getElementById('phaseIcon').value = phase.icon;
+                document.getElementById('phaseDesc1').value = phase.description;
+                document.getElementById('phaseDesc2').value = phase.description2 || '';
+                document.getElementById('phaseButtonText').value = phase.buttonText;
+                document.getElementById('phaseOrder').value = phase.order;
+
+                document.getElementById('pointsList').innerHTML = '';
+                phase.points.forEach(point => {
+                    addPointInput(point);
+                });
+
+                document.getElementById('modal').classList.add('active');
+            } catch (error) {
+                showMessage('Fazan yükl�"m�"d�" x�"ta: ' + error.message, 'error');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            document.getElementById('phaseForm').reset();
+            currentPhaseId = null;
+        }
+
+        function addPointInput(value = '') {
+            const container = document.getElementById('pointsList');
+            const div = document.createElement('div');
+            div.className = 'point-item';
+            div.innerHTML = `
+                <input type="text" placeholder="Nöqt�"" value="${value}">
+                <button type="button" onclick="this.parentElement.remove()">Sil</button>
+            `;
+            container.appendChild(div);
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+
+            const points = Array.from(document.querySelectorAll('#pointsList input'))
+                .map(input => input.value)
+                .filter(value => value.trim() !== '');
+
+            const phaseData = {
+                id: document.getElementById('phaseId').value,
+                title: document.getElementById('phaseTitle').value,
+                subtitle: document.getElementById('phaseSubtitle').value,
+                description: document.getElementById('phaseDesc1').value,
+                description2: document.getElementById('phaseDesc2').value,
+                icon: document.getElementById('phaseIcon').value,
+                points: points,
+                buttonText: document.getElementById('phaseButtonText').value,
+                order: parseInt(document.getElementById('phaseOrder').value)
+            };
+
+            try {
+                let response;
+                if (currentPhaseId) {
+                    response = await fetch(`${API_URL}/phases/${currentPhaseId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(phaseData)
+                    });
+                    showMessage('Faza u�xurla yenil�"ndi!', 'success');
+                } else {
+                    response = await fetch(`${API_URL}/phases`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(phaseData)
+                    });
+                    showMessage('Faza u�xurla �"lav�" edildi!', 'success');
+                }
+
+                if (response.ok) {
+                    closeModal();
+                    loadPhases();
+                }
+            } catch (error) {
+                showMessage('X�"ta: ' + error.message, 'error');
+            }
+        }
+
+        async function deletePhase(id) {
+            if (confirm('Bu faza silinsin mi?')) {
+                try {
+                    console.log('Siliniyor:', id);
+                    const response = await fetch(`${API_URL}/phases/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    console.log('Silm�" cavabı:', response.status, response.statusText);
+
+                    const data = await response.json();
+                    console.log('Silm�" m�"lumatı:', data);
+
+                    if (response.ok) {
+                        showMessage('Faza silindi!', 'success');
+                        loadPhases(); // Yenid�"n yükl�"
+                    } else {
+                        showMessage('Silm�" u�xursuz: ' + (data.error || response.statusText), 'error');
+                    }
+                } catch (error) {
+                    console.error('Silm�" x�"tası:', error);
+                    showMessage('Silinm�"d�" x�"ta: ' + error.message, 'error');
+                }
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            setTimeout(() => {
+                messageDiv.textContent = '';
+                messageDiv.className = '';
+            }, 3000);
+        }
+
+        // ==========================================
+        // MESSAGE MANAGEMENT FUNCTIONS
+        // ==========================================
+
+        async function loadMessages() {
+            try {
+                const response = await fetch(`${API_URL}/messages`);
+
+                if (!response.ok) {
+                    console.error('Mesajları yükl�"m�"d�" x�"ta:', response.status);
+                    return;
+                }
+
+                const messages = await response.json();
+                console.log('Mesajlar:', messages);
+                displayMessages(messages);
+            } catch (error) {
+                console.error('Mesajları yükl�"m�"d�" x�"ta:', error);
+                showMessage('Mesajları yükl�"m�"d�" x�"ta: ' + error.message, 'error');
+            }
+        }
+
+        function displayMessages(messages) {
+            const tbody = document.getElementById('messagesTableBody');
+            tbody.innerHTML = '';
+
+            if (messages.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Mesaj yoxdur</td></tr>';
+                return;
+            }
+
+            messages.forEach(msg => {
+                const date = new Date(msg.date).toLocaleString('az-AZ');
+                const row = document.createElement('tr');
+                row.className = `message-row ${!msg.read ? 'unread' : ''}`;
+
+                const nameCell = document.createElement('td');
+                nameCell.textContent = msg.name;
+
+                const emailCell = document.createElement('td');
+                emailCell.textContent = msg.email;
+
+                const phoneCell = document.createElement('td');
+                phoneCell.textContent = msg.phone;
+
+                const serviceCell = document.createElement('td');
+                serviceCell.textContent = msg.service || '-';
+
+                const dateCell = document.createElement('td');
+                dateCell.textContent = date;
+
+                const actionsCell = document.createElement('td');
+                const actionDiv = document.createElement('div');
+                actionDiv.className = 'message-actions';
+
+                const viewBtn = document.createElement('button');
+                viewBtn.className = 'btn btn-small btn-primary';
+                viewBtn.textContent = 'Bax';
+                viewBtn.onclick = () => viewMessage(msg.id, msg);
+
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'btn btn-small btn-secondary';
+                toggleBtn.textContent = msg.read ? 'Okunmamı�x' : 'Oxundu';
+                toggleBtn.onclick = () => toggleMessageRead(msg.id, msg.read);
+
+                actionDiv.appendChild(viewBtn);
+                actionDiv.appendChild(toggleBtn);
+                actionsCell.appendChild(actionDiv);
+
+                row.appendChild(nameCell);
+                row.appendChild(emailCell);
+                row.appendChild(phoneCell);
+                row.appendChild(serviceCell);
+                row.appendChild(dateCell);
+                row.appendChild(actionsCell);
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function viewMessage(id, msg) {
+            currentMessageId = id;
+
+            document.getElementById('messageDetailName').textContent = msg.name;
+            document.getElementById('messageDetailEmail').innerHTML = `<a href="mailto:${msg.email}">${msg.email}</a>`;
+            document.getElementById('messageDetailCompany').textContent = msg.company || '-';
+            document.getElementById('messageDetailPhone').innerHTML = `<a href="tel:${msg.phone}">${msg.phone}</a>`;
+            document.getElementById('messageDetailService').textContent = msg.service || '-';
+            document.getElementById('messageDetailDate').textContent = new Date(msg.date).toLocaleString('az-AZ');
+            document.getElementById('messageDetailText').textContent = msg.message;
+
+            document.getElementById('messageModal').classList.add('show');
+
+            // Mark as read if not already
+            if (!msg.read) {
+                toggleMessageRead(id, false);
+            }
+        }
+
+        function closeMessageModal() {
+            document.getElementById('messageModal').classList.remove('show');
+            currentMessageId = null;
+        }
+
+        async function toggleMessageRead(id, currentRead) {
+            try {
+                const response = await fetch(`${API_URL}/messages/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ read: !currentRead })
+                });
+
+                if (response.ok) {
+                    loadMessages();
+                }
+            } catch (error) {
+                console.error('X�"ta:', error);
+            }
+        }
+
+        async function deleteMessage() {
+            if (!currentMessageId) return;
+
+            if (confirm('Bu mesaj silinsin mi?')) {
+                try {
+                    const response = await fetch(`${API_URL}/messages/${currentMessageId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        showMessage('Mesaj silindi!', 'success');
+                        closeMessageModal();
+                        loadMessages();
+                    } else {
+                        showMessage('Silm�" u�xursuz', 'error');
+                    }
+                } catch (error) {
+                    console.error('Silm�" x�"tası:', error);
+                    showMessage('Silinm�"d�" x�"ta: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // ==========================================
+        // FAQ MANAGEMENT FUNCTIONS
+        // ==========================================
+
+        let currentFaqId = null;
+
+        async function loadFaqs() {
+            try {
+                const response = await fetch(`${API_URL}/faqs`);
+
+                if (!response.ok) {
+                    console.error('Sualları yükl�"m�"d�" x�"ta:', response.status);
+                    return;
+                }
+
+                const faqs = await response.json();
+                console.log('Suallar:', faqs);
+                displayFaqs(faqs);
+            } catch (error) {
+                console.error('Sualları yükl�"m�"d�" x�"ta:', error);
+                showMessage('Sualları yükl�"m�"d�" x�"ta: ' + error.message, 'error');
+            }
+        }
+
+        function displayFaqs(faqs) {
+            const container = document.getElementById('faqsList');
+
+            if (!container) {
+                console.error('faqsList elementini tapmadı!');
+                return;
+            }
+
+            container.innerHTML = '';
+
+            if (!Array.isArray(faqs)) {
+                console.error('displayFaqs: faqs array deyil:', typeof faqs);
+                container.innerHTML = '<p>M�"lumat formatı x�"tadır</p>';
+                return;
+            }
+
+            if (faqs.length === 0) {
+                container.innerHTML = '<p>Sual tapılmadı</p>';
+                return;
+            }
+
+            faqs.forEach(faq => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.innerHTML = `
+                    <h3>� ${faq.question}</h3>
+                    <p>${faq.answer.substring(0, 100)}...</p>
+                    <p><small>Sıra: ${faq.order}</small></p>
+                    <div class="phase-actions">
+                        <button class="btn btn-primary" onclick="editFaq('${faq.id}')">Redakt�" Et</button>
+                        <button class="btn btn-danger" onclick="deleteFaq('${faq.id}')">Sil</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openAddFaqModal() {
+            currentFaqId = null;
+            document.getElementById('faqModalTitle').textContent = 'Yeni Sual �?lav�" Et';
+            document.getElementById('faqForm').reset();
+            document.getElementById('faqModal').style.display = 'flex';
+        }
+
+        function closeFaqModal() {
+            document.getElementById('faqModal').style.display = 'none';
+            currentFaqId = null;
+        }
+
+        function editFaq(id) {
+            try {
+                const container = document.getElementById('faqsList');
+                const allCards = container.querySelectorAll('.phase-card');
+
+                fetch(`${API_URL}/faqs`)
+                    .then(res => res.json())
+                    .then(faqs => {
+                        const faq = faqs.find(f => f.id === id);
+                        if (faq) {
+                            currentFaqId = id;
+                            document.getElementById('faqModalTitle').textContent = 'Sualı Redakt�" Et';
+                            document.getElementById('faqQuestion').value = faq.question;
+                            document.getElementById('faqAnswer').value = faq.answer;
+                            document.getElementById('faqOrder').value = faq.order || 1;
+                            document.getElementById('faqModal').style.display = 'flex';
+                        }
+                    });
+            } catch (error) {
+                console.error('Redakt�" x�"tası:', error);
+            }
+        }
+
+        async function handleFaqSubmit(e) {
+            e.preventDefault();
+
+            const faqData = {
+                question: document.getElementById('faqQuestion').value,
+                answer: document.getElementById('faqAnswer').value,
+                order: parseInt(document.getElementById('faqOrder').value) || 1
+            };
+
+            try {
+                let response;
+                if (currentFaqId) {
+                    // Update existing FAQ
+                    response = await fetch(`${API_URL}/faqs/${currentFaqId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(faqData)
+                    });
+                    console.log('Sual yenil�"ndi:', response.status);
+                } else {
+                    // Add new FAQ
+                    response = await fetch(`${API_URL}/faqs`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(faqData)
+                    });
+                    console.log('Sual �"lav�" edildi:', response.status);
+                }
+
+                if (response.ok) {
+                    closeFaqModal();
+                    loadFaqs();
+                    showMessage('Sual u�xurla yadda saxlanıldı!', 'success');
+                }
+            } catch (error) {
+                showMessage('X�"ta: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteFaq(id) {
+            if (confirm('Bu sual silinsin mi?')) {
+                try {
+                    const response = await fetch(`${API_URL}/faqs/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        showMessage('Sual silindi!', 'success');
+                        loadFaqs();
+                    } else {
+                        showMessage('Silm�" u�xursuz', 'error');
+                    }
+                } catch (error) {
+                    console.error('Silm�" x�"tası:', error);
+                    showMessage('Silinm�"d�" x�"ta: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // VACANCIES FUNCTIONS
+        let currentVacancyId = null;
+
+        async function loadVacancies() {
+            try {
+                const response = await fetch(`${API_URL}/vacancies`);
+                const vacancies = await response.json();
+                displayVacancies(vacancies);
+            } catch (error) {
+                showMessage('Vakansiyalar yükl�"nm�"d�" x�"ta', 'error');
+            }
+        }
+
+        function displayVacancies(vacancies) {
+            const list = document.getElementById('vacanciesList');
+            list.innerHTML = '';
+            vacancies.forEach(vacancy => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.innerHTML = `
+                    <div style="flex: 1;">
+                        <h3>${vacancy.title}</h3>
+                        <p><strong>Tip:</strong> ${vacancy.type}</p>
+                        <p><strong>�~�"h�"r:</strong> ${vacancy.location}</p>
+                        <p><strong>Maa�x:</strong> ${vacancy.salary}</p>
+                        <p><strong>T�"crüb�":</strong> ${vacancy.experience}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="editVacancy('${vacancy.id}')">Redakt�"</button>
+                        <button class="btn btn-danger" onclick="deleteVacancy('${vacancy.id}')">Sil</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function openAddVacancyModal() {
+            currentVacancyId = null;
+            document.getElementById('vacancyTitle').value = '';
+            document.getElementById('vacancyType').value = '';
+            document.getElementById('vacancyLocation').value = '';
+            document.getElementById('vacancySalary').value = '';
+            document.getElementById('vacancyExperience').value = '';
+            document.getElementById('vacancyDescription').value = '';
+            document.getElementById('vacancyOrder').value = '1';
+            document.getElementById('vacancyModalTitle').textContent = 'Yeni Vakansiya �?lav�" Et';
+            document.getElementById('vacancyModal').style.display = 'block';
+        }
+
+        function editVacancy(id) {
+            fetch(`${API_URL}/vacancies`)
+                .then(r => r.json())
+                .then(vacancies => {
+                    const vacancy = vacancies.find(v => v.id === id);
+                    if (vacancy) {
+                        currentVacancyId = vacancy.id;
+                        document.getElementById('vacancyTitle').value = vacancy.title;
+                        document.getElementById('vacancyType').value = vacancy.type;
+                        document.getElementById('vacancyLocation').value = vacancy.location;
+                        document.getElementById('vacancySalary').value = vacancy.salary;
+                        document.getElementById('vacancyExperience').value = vacancy.experience;
+                        document.getElementById('vacancyDescription').value = vacancy.description;
+                        document.getElementById('vacancyOrder').value = vacancy.order;
+                        document.getElementById('vacancyModalTitle').textContent = 'Vakansiyası Redakt�" Et';
+                        document.getElementById('vacancyModal').style.display = 'block';
+                    }
+                });
+        }
+
+        function closeVacancyModal() {
+            document.getElementById('vacancyModal').style.display = 'none';
+        }
+
+        async function handleVacancySubmit(e) {
+            e.preventDefault();
+
+            const vacancyData = {
+                title: document.getElementById('vacancyTitle').value,
+                type: document.getElementById('vacancyType').value,
+                location: document.getElementById('vacancyLocation').value,
+                salary: document.getElementById('vacancySalary').value,
+                experience: document.getElementById('vacancyExperience').value,
+                description: document.getElementById('vacancyDescription').value,
+                order: parseInt(document.getElementById('vacancyOrder').value)
+            };
+
+            try {
+                let url = `${API_URL}/vacancies`;
+                let method = 'POST';
+
+                if (currentVacancyId) {
+                    url += `/${currentVacancyId}`;
+                    method = 'PUT';
+                }
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(vacancyData)
+                });
+
+                if (response.ok) {
+                    closeVacancyModal();
+                    loadVacancies();
+                    showMessage('Vakansiya u�xurla yadda saxlanıldı!', 'success');
+                }
+            } catch (error) {
+                showMessage('X�"ta: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteVacancy(id) {
+            if (confirm('Vakansiyası silm�"k ist�"yirsiniz?')) {
+                try {
+                    const response = await fetch(`${API_URL}/vacancies/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        loadVacancies();
+                        showMessage('Vakansiya u�xurla silindi!', 'success');
+                    }
+                } catch (error) {
+                    showMessage('Silm�"d�" x�"ta: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // APPLICATIONS FUNCTIONS
+        async function loadApplications() {
+            try {
+                const response = await fetch(`${API_URL}/applications`);
+                const applications = await response.json();
+                const filter = document.getElementById('applicationFilter').value;
+                const filtered = filter ? applications.filter(a => a.status === filter) : applications;
+                displayApplications(filtered);
+            } catch (error) {
+                showMessage('Müraci�"tl�"r yükl�"nm�"d�" x�"ta', 'error');
+            }
+        }
+
+        function displayApplications(applications) {
+            const list = document.getElementById('applicationsList');
+            list.innerHTML = '';
+
+            if (applications.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">Müraci�"t yoxdur</p>';
+                return;
+            }
+
+            applications.forEach(app => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                const statusLabel = {
+                    pending: '�?� Gözl�"m�"d�"',
+                    reviewed: '�x��? N�"z�"rd�"n Keçirildi',
+                    rejected: '�R R�"dd Edildi'
+                };
+                card.innerHTML = `
+                    <div style="flex: 1;">
+                        <h3>${app.name}</h3>
+                        <p><strong>Vakansiya:</strong> ${app.vacancyId}</p>
+                        <p><strong>Email:</strong> ${app.email}</p>
+                        <p><strong>Telefon:</strong> ${app.phone}</p>
+                        <p><strong>T�"crüb�":</strong> ${app.experience} il</p>
+                        <p><strong>Status:</strong> ${statusLabel[app.status] || app.status}</p>
+                        <p style="color: #999; font-size: 0.9rem;"><strong>Tarix:</strong> ${new Date(app.date).toLocaleDateString('az-AZ')}</p>
+                        ${app.coverLetter ? `<p><strong>Q�"bul M�"ktubu:</strong> ${app.coverLetter.substring(0, 100)}...</p>` : ''}
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="viewApplication('${app.id}')">Bax</button>
+                        <select onchange="updateApplicationStatus('${app.id}', this.value)" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="pending" ${app.status === 'pending' ? 'selected' : ''}>Gözl�"m�"d�"</option>
+                            <option value="reviewed" ${app.status === 'reviewed' ? 'selected' : ''}>N�"z�"rd�"n Keçirildi</option>
+                            <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>R�"dd Edildi</option>
+                        </select>
+                        <button class="btn btn-danger" onclick="deleteApplication('${app.id}')">Sil</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function viewApplication(id) {
+            fetch(`${API_URL}/applications`)
+                .then(r => r.json())
+                .then(apps => {
+                    const app = apps.find(a => a.id === id);
+                    if (app) {
+                        alert(`Ad: ${app.name}\nEmail: ${app.email}\nTelefon: ${app.phone}\nT�"crüb�": ${app.experience} il\n\nQ�"bul M�"ktubu:\n${app.coverLetter || 'Yazılmayıb'}`);
+                    }
+                });
+        }
+
+        async function updateApplicationStatus(id, status) {
+            try {
+                const response = await fetch(`${API_URL}/applications/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: status })
+                });
+
+                if (response.ok) {
+                    loadApplications();
+                    showMessage('Status u�xurla yenil�"ndi!', 'success');
+                }
+            } catch (error) {
+                showMessage('X�"ta: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteApplication(id) {
+            if (confirm('Müraci�"ti silm�"k ist�"yirsiniz?')) {
+                try {
+                    const response = await fetch(`${API_URL}/applications/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        loadApplications();
+                        showMessage('Müraci�"t u�xurla silindi!', 'success');
+                    }
+                } catch (error) {
+                    showMessage('Silm�"d�" x�"ta: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // ==========================================
+        // SERVICES FUNCTIONS
+        // ==========================================
+        async function loadServices() {
+            try {
+                const response = await fetch(`${API_URL}/services`);
+                const services = await response.json();
+                displayServices(services);
+            } catch (error) {
+                console.error('Error loading services:', error);
+            }
+        }
+
+        function displayServices(services) {
+            const list = document.getElementById('servicesList');
+            if (!list) return;
+            list.innerHTML = '';
+            services.forEach(service => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.innerHTML = `
+                    <div style="flex: 1;">
+                        <h3>${service.icon} ${service.title}</h3>
+                        <p>${service.description.substring(0, 100)}...</p>
+                        <p><small>Sıra: ${service.order}</small></p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="editService('${service.id}')">Redakt�"</button>
+                        <button class="btn btn-danger" onclick="deleteService('${service.id}')">Sil</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function openServiceModal() {
+            currentServiceId = null;
+            document.getElementById('serviceForm').reset();
+            document.getElementById('serviceModalTitle').textContent = 'Yeni Xidm�"t �?lav�" Et';
+            document.getElementById('serviceModal').classList.add('active');
+        }
+
+        function closeServiceModal() {
+            document.getElementById('serviceModal').classList.remove('active');
+        }
+
+        function editService(id) {
+            fetch(`${API_URL}/services/${id}`)
+                .then(r => r.json())
+                .then(service => {
+                    currentServiceId = service.id;
+                    document.getElementById('serviceTitle').value = service.title;
+                    document.getElementById('serviceIcon').value = service.icon;
+                    document.getElementById('serviceDescription').value = service.description;
+                    document.getElementById('serviceOrder').value = service.order || 1;
+                    document.getElementById('serviceModalTitle').textContent = 'Xidm�"ti Redakt�" Et';
+                    document.getElementById('serviceModal').classList.add('active');
+                });
+        }
+
+        async function handleServiceSubmit(e) {
+            e.preventDefault();
+            const data = {
+                title: document.getElementById('serviceTitle').value,
+                icon: document.getElementById('serviceIcon').value,
+                description: document.getElementById('serviceDescription').value,
+                order: parseInt(document.getElementById('serviceOrder').value)
+            };
+            const method = currentServiceId ? 'PUT' : 'POST';
+            const url = currentServiceId ? `${API_URL}/services/${currentServiceId}` : `${API_URL}/services`;
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    closeServiceModal();
+                    loadServices();
+                    showMessage('Xidm�"t yadda saxlanıldı!', 'success');
+                }
+            } catch (error) {
+                showMessage('X�"ta: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteService(id) {
+            if (confirm('Silm�"k ist�"yirsiniz?')) {
+                await fetch(`${API_URL}/services/${id}`, { method: 'DELETE' });
+                loadServices();
+                showMessage('Xidm�"t silindi!', 'success');
+            }
+        }
+
+
+        // ==========================================
+        // TEAM FUNCTIONS
+        // ==========================================
+        async function loadTeam() {
+            try {
+                const response = await fetch(`${API_URL}/team`);
+                const team = await response.json();
+                displayTeam(team);
+            } catch (error) { console.error(error); }
+        }
+
+        function displayTeam(team) {
+            const list = document.getElementById('teamList');
+            if (!list) return;
+            list.innerHTML = '';
+            team.forEach(member => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.innerHTML = `
+                    <div style="flex: 1;">
+                        <h3>${member.name}</h3>
+                        <p><strong>${member.position}</strong></p>
+                        <p>${member.bio ? member.bio.substring(0, 50) + '...' : ''}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="editTeam('${member.id}')">Redakt�"</button>
+                        <button class="btn btn-danger" onclick="deleteTeam('${member.id}')">Sil</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function openTeamModal() {
+            currentTeamId = null;
+            document.getElementById('teamForm').reset();
+            document.getElementById('teamImagePreview').innerHTML = '';
+            document.getElementById('teamModalTitle').textContent = 'Yeni �Szv �?lav�" Et';
+            document.getElementById('teamModal').classList.add('active');
+        }
+
+        function closeTeamModal() { document.getElementById('teamModal').classList.remove('active'); }
+
+        function editTeam(id) {
+            fetch(`${API_URL}/team/${id}`).then(r => r.json()).then(member => {
+                currentTeamId = member.id;
+                document.getElementById('teamName').value = member.name;
+                document.getElementById('teamPosition').value = member.position;
+                document.getElementById('teamImage').value = member.image || '';
+                if (member.image) {
+                    document.getElementById('teamImagePreview').innerHTML = `<img src="${member.image}" alt="Preview">`;
+                } else {
+                    document.getElementById('teamImagePreview').innerHTML = '';
+                }
+                document.getElementById('teamBio').value = member.bio || '';
+                document.getElementById('teamOrder').value = member.order || 1;
+                document.getElementById('teamModalTitle').textContent = '�Szvü Redakt�" Et';
+                document.getElementById('teamModal').classList.add('active');
+            });
+        }
+
+        async function handleTeamSubmit(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('teamName').value,
+                position: document.getElementById('teamPosition').value,
+                image: document.getElementById('teamImage').value,
+                bio: document.getElementById('teamBio').value,
+                order: parseInt(document.getElementById('teamOrder').value)
+            };
+            const method = currentTeamId ? 'PUT' : 'POST';
+            const url = currentTeamId ? `${API_URL}/team/${currentTeamId}` : `${API_URL}/team`;
+            await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+            closeTeamModal(); loadTeam(); showMessage('�Szv yadda saxlanıldı!', 'success');
+        }
+
+        async function deleteTeam(id) {
+            if (confirm('Silm�"k ist�"yirsiniz?')) {
+                await fetch(`${API_URL}/team/${id}`, { method: 'DELETE' });
+                loadTeam(); showMessage('�Szv silindi!', 'success');
+            }
+        }
+
+
+        // ==========================================
+        // APPS FUNCTIONS
+        // ==========================================
+        async function loadApps() {
+            try {
+                const response = await fetch(`${API_URL}/apps`);
+                const apps = await response.json();
+                displayApps(apps);
+            } catch (error) { console.error(error); }
+        }
+
+        function displayApps(apps) {
+            const list = document.getElementById('appsList');
+            if (!list) return;
+            list.innerHTML = '';
+            apps.forEach(app => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.innerHTML = `
+                    <div style="flex: 1;">
+                        <h3>${app.icon} ${app.name}</h3>
+                        <p class="badge" style="background:#eee; padding:2px 6px; border-radius:4px; display:inline-block;">${app.category}</p>
+                        <p>${app.description}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="editApp('${app.id}')">Redakt�"</button>
+                        <button class="btn btn-danger" onclick="deleteApp('${app.id}')">Sil</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function openAppModal() {
+            currentAppId = null;
+            document.getElementById('appForm').reset();
+            document.getElementById('appModalTitle').textContent = 'Yeni T�"tbiq �?lav�" Et';
+            document.getElementById('appModal').classList.add('active');
+        }
+
+        function closeAppModal() { document.getElementById('appModal').classList.remove('active'); }
+
+        function editApp(id) {
+            fetch(`${API_URL}/apps/${id}`).then(r => r.json()).then(app => {
+                currentAppId = app.id;
+                document.getElementById('appName').value = app.name;
+                document.getElementById('appCategory').value = app.category || 'Dig�"r';
+                document.getElementById('appIcon').value = app.icon;
+                document.getElementById('appDescription').value = app.description;
+                document.getElementById('appFeatures').value = app.features ? app.features.join('\n') : '';
+                document.getElementById('appOrder').value = app.order || 1;
+                document.getElementById('appModalTitle').textContent = 'T�"tbiqi Redakt�" Et';
+                document.getElementById('appModal').classList.add('active');
+            });
+        }
+
+        async function handleAppSubmit(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('appName').value,
+                category: document.getElementById('appCategory').value,
+                icon: document.getElementById('appIcon').value,
+                description: document.getElementById('appDescription').value,
+                features: document.getElementById('appFeatures').value.split('\n').filter(f => f.trim() !== ''),
+                order: parseInt(document.getElementById('appOrder').value)
+            };
+            const method = currentAppId ? 'PUT' : 'POST';
+            const url = currentAppId ? `${API_URL}/apps/${currentAppId}` : `${API_URL}/apps`;
+            await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+            closeAppModal(); loadApps(); showMessage('T�"tbiq yadda saxlanıldı!', 'success');
+        }
+
+        async function deleteApp(id) {
+            if (confirm('Silm�"k ist�"yirsiniz?')) {
+                await fetch(`${API_URL}/apps/${id}`, { method: 'DELETE' });
+                loadApps(); showMessage('T�"tbiq silindi!', 'success');
+            }
+        }
+
+
+        // ==========================================
+        // TESTIMONIALS FUNCTIONS
+        // ==========================================
+        async function loadTestimonials() {
+            const res = await fetch(`${API_URL}/testimonials`);
+            displayTestimonials(await res.json());
+        }
+
+        function displayTestimonials(items) {
+            const list = document.getElementById('testimonialsList');
+            if (!list) return;
+            list.innerHTML = '';
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.innerHTML = `
+                    <div style="flex: 1;">
+                        <h3>${item.author}</h3>
+                        <p><strong>${item.position}</strong></p>
+                        <p><i>"${item.quote}"</i></p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="editTestimonial('${item.id}')">Redakt�"</button>
+                        <button class="btn btn-danger" onclick="deleteTestimonial('${item.id}')">Sil</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function openTestimonialModal() {
+            currentTestimonialId = null;
+            document.getElementById('testimonialForm').reset();
+            document.getElementById('testimonialModalTitle').textContent = 'Yeni R�"y �?lav�" Et';
+            document.getElementById('testimonialModal').classList.add('active');
+        }
+        function closeTestimonialModal() { document.getElementById('testimonialModal').classList.remove('active'); }
+
+        function editTestimonial(id) {
+            fetch(`${API_URL}/testimonials/${id}`).then(r => r.json()).then(item => {
+                currentTestimonialId = item.id;
+                document.getElementById('testAuthor').value = item.author;
+                document.getElementById('testPosition').value = item.position;
+                document.getElementById('testQuote').value = item.quote;
+                document.getElementById('testOrder').value = item.order || 1;
+                document.getElementById('testimonialModalTitle').textContent = 'R�"yi Redakt�" Et';
+                document.getElementById('testimonialModal').classList.add('active');
+            });
+        }
+
+        async function handleTestimonialSubmit(e) {
+            e.preventDefault();
+            const data = {
+                author: document.getElementById('testAuthor').value,
+                position: document.getElementById('testPosition').value,
+                quote: document.getElementById('testQuote').value,
+                order: parseInt(document.getElementById('testOrder').value)
+            };
+            const method = currentTestimonialId ? 'PUT' : 'POST';
+            const url = currentTestimonialId ? `${API_URL}/testimonials/${currentTestimonialId}` : `${API_URL}/testimonials`;
+            await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+            closeTestimonialModal(); loadTestimonials(); showMessage('R�"y yadda saxlanıldı!', 'success');
+        }
+
+        async function deleteTestimonial(id) {
+            if (confirm('Silm�"k ist�"yirsiniz?')) {
+                await fetch(`${API_URL}/testimonials/${id}`, { method: 'DELETE' });
+                loadTestimonials(); showMessage('R�"y silindi!', 'success');
+            }
+        }
+
+
+        // ==========================================
+        // PARTNERS FUNCTIONS
+        // ==========================================
+        async function loadPartners() {
+            const res = await fetch(`${API_URL}/partners`);
+            displayPartners(await res.json());
+        }
+
+        function displayPartners(items) {
+            const list = document.getElementById('partnersList');
+            if (!list) return;
+            list.innerHTML = '';
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.innerHTML = `
+                    <div style="flex: 1; text-align: center;">
+                        <img src="${item.logo}" alt="${item.name}" style="height: 50px; max-width: 100%; object-fit: contain;">
+                        <p><strong>${item.name}</strong></p>
+                        <p class="badge">${item.type === 'partner' ? 'T�"r�"fda�x' : 'Mü�xt�"ri'}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem;">
+                        <button class="btn btn-secondary" onclick="editPartner('${item.id}')">Redakt�"</button>
+                        <button class="btn btn-danger" onclick="deletePartner('${item.id}')">Sil</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function openPartnerModal() {
+            currentPartnerId = null;
+            document.getElementById('partnerForm').reset();
+            document.getElementById('partnerLogoPreview').innerHTML = '';
+            document.getElementById('partnerModalTitle').textContent = 'Yeni T�"r�"fda�x �?lav�" Et';
+            document.getElementById('partnerModal').classList.add('active');
+        }
+        function closePartnerModal() { document.getElementById('partnerModal').classList.remove('active'); }
+
+        function editPartner(id) {
+            fetch(`${API_URL}/partners/${id}`).then(r => r.json()).then(item => {
+                currentPartnerId = item.id;
+                document.getElementById('partnerName').value = item.name;
+                document.getElementById('partnerType').value = item.type;
+                document.getElementById('partnerLogo').value = item.logo;
+                if (item.logo) {
+                    document.getElementById('partnerLogoPreview').innerHTML = `<img src="${item.logo}" alt="Preview">`;
+                } else {
+                    document.getElementById('partnerLogoPreview').innerHTML = '';
+                }
+                document.getElementById('partnerOrder').value = item.order || 1;
+                document.getElementById('partnerModalTitle').textContent = 'T�"r�"fda�xı Redakt�" Et';
+                document.getElementById('partnerModal').classList.add('active');
+            });
+        }
+
+        async function handlePartnerSubmit(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('partnerName').value,
+                type: document.getElementById('partnerType').value,
+                logo: document.getElementById('partnerLogo').value,
+                order: parseInt(document.getElementById('partnerOrder').value)
+            };
+            const method = currentPartnerId ? 'PUT' : 'POST';
+            const url = currentPartnerId ? `${API_URL}/partners/${currentPartnerId}` : `${API_URL}/partners`;
+            await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+            closePartnerModal(); loadPartners(); showMessage('T�"r�"fda�x yadda saxlanıldı!', 'success');
+        }
+
+        async function deletePartner(id) {
+            if (confirm('Silm�"k ist�"yirsiniz?')) {
+                await fetch(`${API_URL}/partners/${id}`, { method: 'DELETE' });
+                loadPartners(); showMessage('T�"r�"fda�x silindi!', 'success');
+            }
+        }
+
+
+        // ==========================================
+        // INDUSTRIES FUNCTIONS
+        // ==========================================
+        async function loadIndustries() {
+            const res = await fetch(`${API_URL}/industries`);
+            displayIndustries(await res.json());
+        }
+
+        function displayIndustries(items) {
+            const list = document.getElementById('industriesList');
+            if (!list) return;
+            list.innerHTML = '';
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.innerHTML = `
+                    <div style="flex: 1;">
+                        <h3>${item.icon} ${item.name}</h3>
+                        <p>${item.description}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="editIndustry('${item.id}')">Redakt�"</button>
+                        <button class="btn btn-danger" onclick="deleteIndustry('${item.id}')">Sil</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function openIndustryModal() {
+            currentIndustryId = null;
+            document.getElementById('industryForm').reset();
+            document.getElementById('industryModalTitle').textContent = 'Yeni S�"naye �?lav�" Et';
+            document.getElementById('industryModal').classList.add('active');
+        }
+        function closeIndustryModal() { document.getElementById('industryModal').classList.remove('active'); }
+
+        function editIndustry(id) {
+            fetch(`${API_URL}/industries/${id}`).then(r => r.json()).then(item => {
+                currentIndustryId = item.id;
+                document.getElementById('industryName').value = item.name;
+                document.getElementById('industryIcon').value = item.icon;
+                document.getElementById('industryDescription').value = item.description;
+                document.getElementById('industryOrder').value = item.order || 1;
+                document.getElementById('industryModalTitle').textContent = 'S�"nayeni Redakt�" Et';
+                document.getElementById('industryModal').classList.add('active');
+            });
+        }
+
+        async function handleIndustrySubmit(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('industryName').value,
+                icon: document.getElementById('industryIcon').value,
+                description: document.getElementById('industryDescription').value,
+                order: parseInt(document.getElementById('industryOrder').value)
+            };
+            const method = currentIndustryId ? 'PUT' : 'POST';
+            const url = currentIndustryId ? `${API_URL}/industries/${currentIndustryId}` : `${API_URL}/industries`;
+            await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+            closeIndustryModal(); loadIndustries(); showMessage('S�"naye yadda saxlanıldı!', 'success');
+        }
+
+        async function deleteIndustry(id) {
+            if (confirm('Silm�"k ist�"yirsiniz?')) {
+                await fetch(`${API_URL}/industries/${id}`, { method: 'DELETE' });
+                loadIndustries(); showMessage('S�"naye silindi!', 'success');
+            }
+        }
+
+
+        // ==========================================
+        // BLOG FUNCTIONS
+        // ==========================================
+        async function loadBlogs() {
+            try {
+                const response = await fetch(`${API_URL}/blogs`);
+                const blogs = await response.json();
+                displayBlogs(blogs);
+            } catch (error) { console.error(error); }
+        }
+
+        function displayBlogs(blogs) {
+            const list = document.getElementById('blogsList');
+            if (!list) return;
+            list.innerHTML = '';
+            blogs.forEach(blog => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.innerHTML = `
+                    <div style="flex: 1;">
+                        <h3>${blog.title}</h3>
+                        <p><small>/blog/${blog.slug}</small></p>
+                        <p>${blog.excerpt ? blog.excerpt.substring(0, 100) : ''}...</p>
+                        <p>${blog.featured ? '�? Seçilmi�x' : ''}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="editBlog('${blog.id}')">RedaktY</button>
+                        <button class="btn btn-danger" onclick="deleteBlog('${blog.id}')">Sil</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function generateSlug(text) {
+            const slug = text.toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            document.getElementById('blogSlug').value = slug;
+        }
+
+        function openBlogModal() {
+            currentBlogId = null;
+            fetchedBlog = null;
+            document.getElementById('blogForm').reset();
+
+            document.getElementById('blogImage').value = '';
+            document.getElementById('blogVideo').value = '';
+            document.getElementById('blogImageFile').value = '';
+            document.getElementById('blogVideoFile').value = '';
+            document.getElementById('blogIcon').value = '📰';
+
+            document.getElementById('blogImagePreview').innerHTML = '';
+            document.getElementById('blogVideoPreview').innerHTML = '';
+
+            document.getElementById('blogModalTitle').textContent = 'Yeni Blog �?lav�" Et';
+            document.getElementById('blogModal').classList.add('active');
+        }
+
+        function closeBlogModal() {
+            document.getElementById('blogModal').classList.remove('active');
+            document.getElementById('blogForm').reset();
+            document.getElementById('blogImagePreview').innerHTML = '';
+            document.getElementById('blogVideoPreview').innerHTML = '';
+            document.getElementById('blogImage').value = '';
+            document.getElementById('blogVideo').value = '';
+        }
+
+        function editBlog(id) {
+            fetch(`${API_URL}/blogs/${id}`).then(r => r.json()).then(blog => {
+                currentBlogId = blog.id;
+                fetchedBlog = blog;
+                document.getElementById('blogTitle').value = blog.title;
+                document.getElementById('blogSlug').value = blog.slug;
+                document.getElementById('blogAuthor').value = blog.author || 'Admin';
+                document.getElementById('blogCategory').value = blog.category || '';
+                document.getElementById('blogExcerpt').value = blog.excerpt || '';
+                document.getElementById('blogContent').value = blog.content || '';
+                document.getElementById('blogImage').value = blog.image || '';
+                document.getElementById('blogIcon').value = blog.icon || '📰';
+                if (blog.image) {
+                    document.getElementById('blogImagePreview').innerHTML = `<img src="${blog.image}" alt="Preview">`;
+                } else {
+                    document.getElementById('blogImagePreview').innerHTML = '';
+                }
+                document.getElementById('blogVideo').value = blog.video || '';
+                if (blog.video) {
+                    document.getElementById('blogVideoPreview').innerHTML = `<video src="${blog.video}" style="width: 100%; max-height: 150px;" controls></video>`;
+                } else {
+                    document.getElementById('blogVideoPreview').innerHTML = '';
+                }
+                document.getElementById('blogFeatured').checked = blog.featured || false;
+                document.getElementById('blogOrder').value = blog.order || 1;
+                document.getElementById('blogModalTitle').textContent = 'Blogu RedaktY Et';
+                document.getElementById('blogModal').classList.add('active');
+            });
+        }
+
+        async function handleBlogSubmit(e) {
+            e.preventDefault();
+
+            if (!currentBlogId) {
+                if (!document.getElementById('blogImageFile').files.length) document.getElementById('blogImage').value = '';
+                if (!document.getElementById('blogVideoFile').files.length) document.getElementById('blogVideo').value = '';
+            }
+            const data = {
+                title: document.getElementById('blogTitle').value,
+                slug: document.getElementById('blogSlug').value,
+                author: document.getElementById('blogAuthor').value,
+                date: (currentBlogId && fetchedBlog && fetchedBlog.date) ? fetchedBlog.date : new Date().toISOString().split('T')[0],
+                category: document.getElementById('blogCategory').value,
+                readTime: (currentBlogId && fetchedBlog && fetchedBlog.readTime) ? fetchedBlog.readTime : '',
+                excerpt: document.getElementById('blogExcerpt').value,
+                content: document.getElementById('blogContent').value,
+                image: document.getElementById('blogImage').value,
+                icon: document.getElementById('blogIcon').value || '📰',
+                video: document.getElementById('blogVideo').value,
+                featured: document.getElementById('blogFeatured').checked,
+                order: parseInt(document.getElementById('blogOrder').value)
+            };
+            const method = currentBlogId ? 'PUT' : 'POST';
+            const url = currentBlogId ? `${API_URL}/blogs/${currentBlogId}` : `${API_URL}/blogs`;
+            await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+            closeBlogModal(); loadBlogs(); showMessage('Blog yadda saxlanıldı!', 'success');
+        }
+
+        async function deleteBlog(id) {
+            if (confirm('Silm�"k ist�"yirsiniz?')) {
+                await fetch(`${API_URL}/blogs/${id}`, { method: 'DELETE' });
+                loadBlogs(); showMessage('Blog silindi!', 'success');
+            }
+        }
+    </script>
+</body>
+
+</html>

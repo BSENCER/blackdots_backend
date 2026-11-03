@@ -1,0 +1,1105 @@
+/* ==================================================
+   ƏLAVƏ MOBİL RESPONSİV DÜZƏLİŞLƏR
+   ================================================== */
+
+/* 
+   NOTE: html and body overflow rules are now centralized in style.css
+   to prevent conflicts and ensure consistent behavior
+*/
+
+/* Bütün elementlər üçün box-sizing fix */
+* {
+    box-sizing: border-box;
+}
+
+/* Media elements should be responsive */
+img,
+video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Container fix */
+.container {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Mobil cihazlar üçün (< 768px) */
+@media (max-width: 768px) {
+
+    /* Nav fixed positioning */
+    nav {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        z-index: 1000 !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+    }
+
+    /* Hamburger - CRITICAL FIX */
+    .hamburger {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+        cursor: pointer !important;
+        z-index: 1002 !important;
+        /* ✅ Nav-dan yuxarı */
+        position: relative !important;
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+        padding: 10px !important;
+        margin: -10px !important;
+    }
+
+    .hamburger span {
+        width: 25px !important;
+        height: 3px !important;
+        background: #000 !important;
+        display: block !important;
+        border-radius: 2px !important;
+        transition: all 0.3s ease !important;
+    }
+
+    /* Nav Links - CRITICAL FIX */
+    .nav-links {
+        display: flex !important;
+        position: fixed !important;
+        top: 70px !important;
+        /* ✅ Nav hündürlüyü qədər */
+        left: -100% !important;
+        /* ✅ Başlanğıcda gizli */
+        width: 100% !important;
+        height: calc(100vh - 70px) !important;
+        /* ✅ Nav çıxmaqla ekranın qalanı */
+        background: rgba(255, 255, 255, 0.98) !important;
+        flex-direction: column !important;
+        padding: 2rem 0 !important;
+        transition: left 0.3s ease !important;
+        /* ✅ Sürüşmə animasiyası */
+        z-index: 1001 !important;
+        /* ✅ Nav-dan yuxarı, hamburger-dən aşağı */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+        overflow-y: auto !important;
+        list-style: none !important;
+    }
+
+    /* Aktiv vəziyyət - GÖRÜNƏN MENÜ */
+    .nav-links.active {
+        left: 0 !important;
+        /* ✅ Sola sürüşür */
+    }
+
+    .nav-links li {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+        list-style: none !important;
+    }
+
+    .nav-links a {
+        display: block !important;
+        padding: 1.2rem 1.5rem !important;
+        font-size: 1.1rem !important;
+        color: #000 !important;
+        text-decoration: none !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        transition: background 0.2s ease !important;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:active {
+        background: #f5f5f5 !important;
+        color: #714B67 !important;
+    }
+
+    /* Containerlar */
+    .container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        max-width: 100% !important;
+    }
+
+    /* Section padding - page-header, blog-hero, hero istisna */
+    section:not(.page-header):not(.blog-hero):not(.hero) {
+        padding: 4rem 1rem !important;
+    }
+
+    /* Blog grid */
+    .blog-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+        padding: 0;
+    }
+
+    /* Team grid */
+    .team-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+    }
+
+    /* Industries grid */
+    .industries-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+    }
+
+    /* Apps grid */
+    .apps-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+    }
+
+    /* Testimonials grid */
+    .testimonials-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+    }
+
+    /* Complete services grid */
+    .complete-services-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Phase content */
+    .phase-inner {
+        flex-direction: column !important;
+        gap: 2rem;
+    }
+
+    .phase-image,
+    .phase-text {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .phase-image-placeholder {
+        width: 100px !important;
+        height: 100px !important;
+        font-size: 3rem !important;
+    }
+
+    /* Methodology tabs */
+    .methodology-tabs {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .methodology-tab {
+        font-size: 0.85rem;
+        padding: 0.6rem 1rem;
+        flex: 1 1 auto;
+        min-width: max-content;
+    }
+
+    /* Partners slider */
+    .partners-wrapper {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .partners-slider {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .slider-btn {
+        display: none;
+    }
+
+    .partner-card,
+    .client-card {
+        min-width: 200px;
+    }
+
+    /* Contact info */
+    .contact-info {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+    }
+
+    .info-item {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    /* Contact container */
+    .contact-container {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Quick contact buttons */
+    .quick-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .quick-btn {
+        width: 100%;
+        text-align: center;
+        display: block;
+    }
+
+    /* Gold partner box */
+    .gold-partner-box {
+        padding: 2rem 1rem;
+    }
+
+    .gold-partner-box h3 {
+        font-size: 1.5rem;
+    }
+
+    .partner-details {
+        padding: 1.5rem 1rem;
+    }
+
+    .benefits-small {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+
+    /* Stats */
+    .stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem;
+    }
+
+    /* Service boxes */
+    .service-box {
+        padding: 1.5rem;
+    }
+
+    /* Blog card */
+    .blog-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .blog-image {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .blog-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .blog-content {
+        padding: 1.5rem;
+    }
+
+    .blog-meta {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .blog-meta span {
+        white-space: nowrap;
+    }
+
+    /* Vacancy cards */
+    .vacancy-card {
+        padding: 1.5rem;
+    }
+
+    .vacancy-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .vacancy-meta {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    /* Forms */
+    .form-row {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Hero content */
+    .hero-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-image {
+        order: -1;
+        margin-bottom: 2rem;
+    }
+
+    /* About page stats */
+    .about-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Apps container */
+    .apps-container {
+        padding: 0;
+    }
+
+    .app-category {
+        margin-bottom: 3rem;
+    }
+
+    /* Table responsiveness */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    /* Partners section */
+    .partners-section {
+        padding: 4rem 1rem !important;
+    }
+}
+
+/* Extra kiçik ekranlar üçün (< 480px) */
+@media (max-width: 480px) {
+
+    /* Daha kiçik padding - page-header, blog-hero, hero istisna */
+    section:not(.page-header):not(.blog-hero):not(.hero) {
+        padding: 3rem 0.75rem !important;
+    }
+
+    .container {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+
+    /* Nav logo */
+    .logo {
+        font-size: 1.1rem !important;
+    }
+
+    /* Hamburger menu CRITICAL düzəliş */
+    .hamburger {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 5px !important;
+        cursor: pointer !important;
+        z-index: 1001 !important;
+        /* Mobil touch üçün kritik */
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+        padding: 10px !important;
+        margin: -10px !important;
+    }
+
+    .hamburger span {
+        width: 25px !important;
+        height: 3px !important;
+        background: #000 !important;
+        display: block !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .nav-links {
+        display: flex !important;
+        position: fixed !important;
+        top: 55px !important;
+        left: -100% !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: calc(100vh - 55px) !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+        flex-direction: column !important;
+        padding: 1.5rem 0 !important;
+        transition: left 0.3s ease !important;
+        z-index: 1000 !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        overflow-y: auto !important;
+    }
+
+    .nav-links.active {
+        left: 0 !important;
+    }
+
+    .nav-links li {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+        list-style: none !important;
+    }
+
+    .nav-links a {
+        display: block !important;
+        padding: 1rem 1.5rem !important;
+        font-size: 1rem !important;
+        color: #000 !important;
+        text-decoration: none !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        transition: background 0.2s ease !important;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:active {
+        background: #f5f5f5 !important;
+        color: #714B67 !important;
+    }
+
+    /* Hero section */
+    .hero {
+        padding-top: 80px !important;
+    }
+
+    .hero-content h1 {
+        font-size: 1.3rem !important;
+        line-height: 1.3 !important;
+    }
+
+    .hero-content p {
+        font-size: 0.85rem !important;
+    }
+
+    /* Buttonlar */
+    .btn {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.85rem !important;
+        width: 100%;
+    }
+
+    .btn-large {
+        padding: 1rem 1.5rem !important;
+        font-size: 0.9rem !important;
+    }
+
+    /* Section başlıqları */
+    .section-title {
+        font-size: 1.4rem !important;
+    }
+
+    .section-subtitle {
+        font-size: 0.8rem !important;
+    }
+
+    /* Cards */
+    .blog-card,
+    .service-card,
+    .feature-card,
+    .team-member,
+    .industry-card,
+    .app-card-detailed {
+        padding: 1rem !important;
+    }
+
+    .blog-card {
+        padding: 0 !important;
+    }
+
+    /* Card başlıqları */
+    .blog-card h3,
+    .service-card h3,
+    .feature-card h3 {
+        font-size: 1.1rem !important;
+    }
+
+    /* Form inputs */
+    input,
+    textarea,
+    select {
+        font-size: 0.85rem !important;
+        padding: 0.5rem !important;
+    }
+
+    /* Blog meta */
+    .blog-meta {
+        font-size: 0.75rem !important;
+    }
+
+    /* Methodology tabs */
+    .methodology-tab {
+        font-size: 0.75rem !important;
+        padding: 0.5rem 0.75rem !important;
+    }
+
+    /* Footer */
+    .footer-section h4 {
+        font-size: 0.9rem !important;
+    }
+
+    .footer-links a {
+        font-size: 0.85rem !important;
+    }
+
+    /* Gold partner */
+    .badge-icon-small {
+        font-size: 2.5rem !important;
+    }
+
+    .gold-partner-box h3 {
+        font-size: 1.2rem !important;
+    }
+
+    .partner-details {
+        padding: 1.5rem 1rem !important;
+    }
+
+    .partner-details h4 {
+        font-size: 1.2rem !important;
+    }
+
+    /* Stats */
+    .stat-number {
+        font-size: 1.3rem !important;
+    }
+
+    .stat-label {
+        font-size: 0.7rem !important;
+    }
+
+    /* Blog images */
+    .blog-image {
+        height: 180px !important;
+    }
+
+    /* Service icon */
+    .service-icon {
+        font-size: 2rem !important;
+    }
+
+    /* Feature icon */
+    .feature-icon {
+        font-size: 2.5rem !important;
+    }
+}
+
+/* Landscape mode fix mobil cihazlar üçün */
+@media (max-height: 600px) and (orientation: landscape) {
+    .hero {
+        padding-top: 80px !important;
+        min-height: auto !important;
+    }
+
+    .hero-content h1 {
+        font-size: 1.5rem !important;
+    }
+
+    .nav-links {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    section:not(.page-header):not(.blog-hero):not(.hero) {
+        padding: 2rem 1rem !important;
+    }
+}
+
+/* Tablet üçün optimizasiya (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .blog-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .team-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .complete-services-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .stats {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+
+    .industries-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .apps-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Safe area for notched devices */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+}
+
+
+/* ==================================================
+   SERVICES S?HIF?SI RESPONSIVE FIX
+   ================================================== */
+
+@media (max-width: 768px) {
+    .services-detail {
+        padding: 2rem 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    .service-detail-item {
+        padding: 2rem 1rem !important;
+        overflow-x: hidden !important;
+    }
+
+    .service-detail-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+
+    .service-detail-text,
+    .service-detail-visual {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 1rem !important;
+        box-sizing: border-box !important;
+    }
+
+    .service-detail-item.reverse .service-detail-text {
+        order: 1;
+    }
+
+    .service-detail-item.reverse .service-detail-visual {
+        order: 2;
+    }
+
+    .timeline {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+
+    .tech-stack {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem !important;
+    }
+
+    .visual-card {
+        padding: 1.5rem 1rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .tech-stack {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
+/* ==================================================
+   CONTACT S?HIF?SI RESPONSIVE FIX
+   ================================================== */
+
+@media (max-width: 768px) {
+
+    .contact-form-area,
+    .contact-info-area {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 1.5rem 1rem !important;
+        box-sizing: border-box !important;
+    }
+
+    .contact-info-card {
+        padding: 1.5rem 1rem !important;
+    }
+
+    .page-header {
+        padding: 12rem 1rem 3rem !important;
+    }
+
+    .page-header h1 {
+        font-size: 1.8rem !important;
+    }
+
+    .map-container iframe {
+        height: 300px !important;
+    }
+}
+
+/* ==================================================
+   ABOUT SEHIFESI RESPONSIVE FIX
+   ================================================== */
+
+@media (max-width: 768px) {
+    .about-hero {
+        padding: 3rem 1rem !important;
+    }
+
+    .about-content {
+        flex-direction: column !important;
+        gap: 2rem !important;
+    }
+
+    .about-text,
+    .about-visual {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .about-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .stat-card {
+        padding: 1.5rem 1rem !important;
+    }
+
+    /* About story section */
+    .about-story {
+        padding: 2rem 1rem !important;
+        overflow-x: hidden !important;
+    }
+
+    .about-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .story-content {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Story Text */
+    .story-text {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 2rem !important;
+        display: block !important;
+    }
+
+    .story-text h2 {
+        font-size: 1.5rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 1rem !important;
+        word-wrap: break-word !important;
+    }
+
+    .story-text p {
+        font-size: 0.95rem !important;
+        line-height: 1.6 !important;
+        margin-bottom: 1rem !important;
+    }
+
+    /* Story Stats - 1 Column for Mobile to prevent overflow */
+    .story-stats {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        /* Changed to 1 column */
+        gap: 1rem !important;
+        box-sizing: border-box !important;
+    }
+
+    .stat-box {
+        padding: 1.5rem !important;
+        background-color: #f8f9fa !important;
+        /* Ensure background visibility */
+        border: 1px solid #eee !important;
+        border-radius: 8px !important;
+        text-align: center !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .stat-box h3 {
+        font-size: 2rem !important;
+        margin-bottom: 0.5rem !important;
+        color: #714B67 !important;
+    }
+
+    .stat-box p {
+        font-size: 0.9rem !important;
+        color: #666 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        margin: 0 !important;
+    }
+
+    /* Values section */
+    .values-section {
+        padding: 3rem 1rem !important;
+        overflow-x: hidden !important;
+    }
+
+    .values-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+        max-width: 100% !important;
+    }
+
+    .value-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 1.5rem !important;
+        box-sizing: border-box !important;
+    }
+
+    .value-icon {
+        font-size: 2.5rem !important;
+    }
+
+    .value-card h3 {
+        font-size: 1.1rem !important;
+    }
+
+    .value-card p {
+        font-size: 0.9rem !important;
+    }
+
+    /* Partners section */
+    .partners-section {
+        padding: 3rem 1rem !important;
+        overflow-x: hidden !important;
+    }
+
+    .partners-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2rem !important;
+        padding: 1.5rem !important;
+        max-width: 100% !important;
+    }
+
+    .partner-badge-large {
+        padding: 1rem !important;
+    }
+
+    .badge-icon {
+        font-size: 4rem !important;
+    }
+
+    .partner-badge-large h3 {
+        font-size: 1.5rem !important;
+    }
+
+    .partner-badge-large p {
+        font-size: 1rem !important;
+    }
+
+    .partnership-text h4 {
+        font-size: 1.3rem !important;
+    }
+
+    .partnership-text p {
+        font-size: 0.95rem !important;
+    }
+
+    .partnership-text li {
+        font-size: 0.95rem !important;
+        padding: 0.5rem 0 !important;
+    }
+
+    /* Gold partner info */
+    .gold-partner-info {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .gold-partner-box {
+        padding: 1.5rem 1rem !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+
+    .badge-icon-small {
+        font-size: 2.5rem !important;
+    }
+
+    .partner-status {
+        font-size: 0.9rem !important;
+    }
+
+    .partner-details {
+        padding: 1rem !important;
+        max-width: 100% !important;
+    }
+
+    .partner-details h4 {
+        font-size: 1.1rem !important;
+    }
+
+    .partner-details p {
+        font-size: 0.9rem !important;
+    }
+
+    .benefits-small {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+
+    .benefits-small li {
+        font-size: 0.9rem !important;
+        padding: 0.3rem 0 !important;
+    }
+
+    /* Industries section */
+    .industries-section {
+        padding: 3rem 1rem !important;
+        overflow-x: hidden !important;
+    }
+
+    .industries-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+
+    .industry-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 1.5rem !important;
+        box-sizing: border-box !important;
+    }
+
+    .industry-icon {
+        font-size: 2.5rem !important;
+    }
+
+    /* CTA section */
+    .cta {
+        padding: 4rem 1rem !important;
+        overflow-x: hidden !important;
+    }
+
+    .cta-content {
+        max-width: 100% !important;
+    }
+
+    .cta h2 {
+        font-size: 1.6rem !important;
+        line-height: 1.3 !important;
+    }
+
+    .cta p {
+        font-size: 1rem !important;
+    }
+
+    .btn-white {
+        padding: 1rem 2rem !important;
+        font-size: 0.95rem !important;
+        display: block !important;
+        text-align: center !important;
+    }
+
+    /* Footer */
+    footer {
+        padding: 3rem 1rem 2rem !important;
+        overflow-x: hidden !important;
+    }
+
+    .footer-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2rem !important;
+        max-width: 100% !important;
+    }
+
+    .footer-col {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .footer-brand {
+        font-size: 1.8rem !important;
+    }
+
+    .footer-about {
+        font-size: 0.9rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .odoo-badge {
+        font-size: 0.75rem !important;
+        padding: 0.4rem 0.8rem !important;
+    }
+
+    .footer-section {
+        width: 100% !important;
+    }
+
+    .footer-section h4 {
+        font-size: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .footer-links {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .footer-links li {
+        margin-bottom: 0.5rem !important;
+    }
+
+    .footer-links a {
+        font-size: 0.9rem !important;
+    }
+
+    .footer-bottom {
+        margin-top: 2rem !important;
+        padding-top: 1.5rem !important;
+    }
+
+    .footer-bottom p {
+        font-size: 0.85rem !important;
+    }
+}
+
+/* Extra kicik mobil cihazlar ucun */
+@media (max-width: 480px) {
+    .story-stats {
+        grid-template-columns: 1fr !important;
+    }
+
+    .stat-box {
+        padding: 1.2rem !important;
+    }
+
+    .stat-box h3 {
+        font-size: 1.5rem !important;
+    }
+
+    .cta h2 {
+        font-size: 1.3rem !important;
+    }
+
+    .btn-white {
+        padding: 0.8rem 1.5rem !important;
+        font-size: 0.85rem !important;
+    }
+
+    .gold-partner-box h3 {
+        font-size: 1.2rem !important;
+    }
+
+    .footer-brand {
+        font-size: 1.5rem !important;
+    }
+}

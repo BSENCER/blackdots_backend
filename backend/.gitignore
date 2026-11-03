@@ -1,0 +1,9 @@
+.env
+.env.example
+backend/.env
+backend/.env.example
+blackdots.db
+__pycache__/
+*.py[cod]
+uploads/*
+!uploads/.gitkeep

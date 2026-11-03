@@ -1,0 +1,1387 @@
+﻿<!DOCTYPE html>
+<html lang="az">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackDots - Admin Panel</title>
+    <style>
+        /* ... existing styles ... */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .navbar {
+            background: #714B67;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.8rem;
+        }
+
+        .container {
+            max-width: 1600px;
+            width: 95%;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: #714B67;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #714B67;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a3a52;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #714B67;
+            box-shadow: 0 0 0 3px rgba(113, 75, 103, 0.1);
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
+        }
+
+        .phase-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .phase-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid #714B67;
+        }
+
+        .phase-card h3 {
+            margin-bottom: 0.5rem;
+            color: #714B67;
+        }
+
+        .phase-card p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .phase-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .phase-actions button {
+            flex: 1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .points-input {
+            margin-top: 0.5rem;
+        }
+
+        .point-item {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .point-item input {
+            flex: 1;
+        }
+
+        .point-item button {
+            padding: 0.75rem 1rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .point-item button:hover {
+            background: #c0392b;
+        }
+
+        .add-point-btn {
+            padding: 0.75rem;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .add-point-btn:hover {
+            background: #229954;
+        }
+
+        .admin-tabs {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 0.5rem;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .admin-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: -0.5rem;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            white-space: nowrap;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .tab-button:hover {
+            color: #714B67;
+            background: #f9f9f9;
+        }
+
+        .tab-button.active {
+            color: white;
+            background: #714B67;
+            border-color: #714B67;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .messages-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .messages-table th,
+        .messages-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .messages-table th {
+            background: #f8f8f8;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .messages-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .message-row.unread {
+            background: #fffbf0;
+            font-weight: 500;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .message-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .message-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .message-detail h3 {
+            margin-bottom: 1rem;
+            color: #714B67;
+        }
+
+        .message-detail-row {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .message-detail-row strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #714B67;
+        }
+
+        .image-preview-container {
+            margin-top: 10px;
+            width: 100px;
+            height: 100px;
+            border: 1px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+
+        .image-preview-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Login Styles */
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #714B67 0%, #2a2a72 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .login-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 380px;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            margin-bottom: 1.5rem;
+            color: #714B67;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: #714B67;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .login-box button:hover {
+            background: #5a3b52;
+        }
+
+        #dashboard-content {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Overlay -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>🔐 Admin Giriş</h2>
+            <form onsubmit="handleLogin(event)">
+                <input type="text" id="username" placeholder="İstifadəçi adı" required>
+                <input type="password" id="password" placeholder="Şifrə" required>
+                <div id="loginError" style="color: red; margin-bottom: 1rem; font-size: 0.9rem;"></div>
+                <button type="submit">Daxil Ol</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div id="dashboard-content">
+        <div class="navbar" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1>⚙️ BlackDots Admin Panel</h1>
+                <p>Metodologiya Fazalarını İdarə Et</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="openPasswordModal()"
+                    style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    Şifrəni Dəyiş
+                </button>
+                <button onclick="logout()"
+                    style="background: white; color: #714B67; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    Çıxış
+                </button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div id="message"></div>
+
+            <div class="admin-tabs">
+                <button class="tab-button active" onclick="switchTab('phases')">📊 Metodoloji Fazalar</button>
+                <button class="tab-button" onclick="switchTab('messages')">📩 Əlaqə Mesajları</button>
+                <button class="tab-button" onclick="switchTab('faqs')">❓ Tez-tez Verilən Suallar</button>
+                <button class="tab-button" onclick="switchTab('vacancies')">💼 Vakansiyalar</button>
+                <button class="tab-button" onclick="switchTab('services')">🛠️ Xidmətlər</button>
+                <button class="tab-button" onclick="switchTab('team')">👥 Komanda</button>
+                <button class="tab-button" onclick="switchTab('apps')">📱 Tətbiqlər</button>
+                <button class="tab-button" onclick="switchTab('testimonials')">💬 Rəylər</button>
+                <button class="tab-button" onclick="switchTab('partners')">🤝 Tərəfdaşlar</button>
+                <button class="tab-button" onclick="switchTab('industries')">🏭 Sənayələr</button>
+                <button class="tab-button" onclick="switchTab('blogs')">📝 Blog</button>
+            </div>
+
+            <div id="phases" class="tab-content active">
+                <button class="btn btn-primary" onclick="openAddModal()">+ Yeni Faza Əlavə Et</button>
+                <h2 class="section-title">Fazaları İdarə Et</h2>
+                <div id="phasesList" class="phase-list"></div>
+            </div>
+
+            <div id="messages" class="tab-content">
+                <h2 class="section-title">Əlaqə Mesajları</h2>
+                <div id="messagesList" style="overflow-x: auto;">
+                    <table class="messages-table">
+                        <thead>
+                            <tr>
+                                <th>Ad</th>
+                                <th>Email</th>
+                                <th>Telefon</th>
+                                <th>Xidmət</th>
+                                <th>Tarix</th>
+                                <th>Əməliyyatlar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="faqs" class="tab-content">
+                <button class="btn btn-primary" onclick="openAddFaqModal()">+ Yeni Sual Əlavə Et</button>
+                <h2 class="section-title">Tez-tez Verilən Suallar</h2>
+                <div id="faqsList" class="phase-list"></div>
+            </div>
+
+            <div id="vacancies" class="tab-content">
+                <button class="btn btn-primary" onclick="openAddVacancyModal()">+ Yeni Vakansiya Əlavə Et</button>
+                <h2 class="section-title">Açıq Vakansiyalar</h2>
+                <div id="vacanciesList" class="phase-list"></div>
+            </div>
+
+            <div id="applications" class="tab-content">
+                <h2 class="section-title">Müraciətlər</h2>
+                <div style="margin-bottom: 1rem;">
+                    <label for="applicationFilter" style="display: inline; margin-right: 0.5rem;">Filtr:</label>
+                    <select id="applicationFilter" onchange="loadApplications()" style="padding: 0.5rem;">
+                        <option value="">Hamısı</option>
+                        <option value="pending">Gözləmədə</option>
+                        <option value="reviewed">Nəzərdən Keçirildi</option>
+                        <option value="rejected">Rədd Edildi</option>
+                    </select>
+                </div>
+                <div id="applicationsList" class="phase-list"></div>
+            </div>
+
+            <div id="services" class="tab-content">
+                <button class="btn btn-primary" onclick="openServiceModal()">+ Yeni Xidmət Əlavə Et</button>
+                <h2 class="section-title">Xidmətlər</h2>
+                <div id="servicesList" class="phase-list"></div>
+            </div>
+
+            <div id="team" class="tab-content">
+                <button class="btn btn-primary" onclick="openTeamModal()">+ Yeni Üzv Əlavə Et</button>
+                <h2 class="section-title">Komanda</h2>
+                <div id="teamList" class="phase-list"></div>
+            </div>
+
+            <div id="apps" class="tab-content">
+                <button class="btn btn-primary" onclick="openAppModal()">+ Yeni Tətbiq Əlavə Et</button>
+                <h2 class="section-title">Tətbiqlər</h2>
+                <div id="appsList" class="phase-list"></div>
+            </div>
+
+            <div id="testimonials" class="tab-content">
+                <button class="btn btn-primary" onclick="openTestimonialModal()">+ Yeni Rəy Əlavə Et</button>
+                <h2 class="section-title">Müştəri Rəyləri</h2>
+                <div id="testimonialsList" class="phase-list"></div>
+            </div>
+
+            <div id="partners" class="tab-content">
+                <button class="btn btn-primary" onclick="openPartnerModal()">+ Yeni Tərəfdaş Əlavə Et</button>
+                <h2 class="section-title">Tərəfdaşlar və Müştərilər</h2>
+                <div id="partnersList" class="phase-list"
+                    style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));"></div>
+            </div>
+
+            <div id="industries" class="tab-content">
+                <button class="btn btn-primary" onclick="openIndustryModal()">+ Yeni Sənaye Əlavə Et</button>
+                <h2 class="section-title">Sənayələr</h2>
+                <div id="industriesList" class="phase-list"></div>
+            </div>
+
+            <div id="blogs" class="tab-content">
+                <button class="btn btn-primary" onclick="openBlogModal()">+ Yeni Blog Əlavə Et</button>
+                <h2 class="section-title">Blog Yazıları</h2>
+                <div id="blogsList" class="phase-list"></div>
+            </div>
+        </div>
+    </div> <!-- End Dashboard Content -->
+
+    <!-- Modals -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Yeni Faza Əlavə Et</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="phaseForm" onsubmit="handleSubmit(event)">
+                <div class="form-group"><label>Faza ID (İngilis, heç boşluq)*</label><input type="text" id="phaseId"
+                        required></div>
+                <div class="form-group"><label>Başlıq*</label><input type="text" id="phaseTitle" required></div>
+                <div class="form-group"><label>Alt Başlıq*</label><input type="text" id="phaseSubtitle" required></div>
+                <div class="form-group"><label>İkon (Emoji)*</label><input type="text" id="phaseIcon" required></div>
+                <div class="form-group"><label>Açıqlama 1*</label><textarea id="phaseDesc1" required></textarea></div>
+                <div class="form-group"><label>Açıqlama 2</label><textarea id="phaseDesc2"></textarea></div>
+                <div class="form-group"><label>Düymə Mətni*</label><input type="text" id="phaseButtonText" required>
+                </div>
+                <div class="form-group"><label>Nöqtələr*</label>
+                    <div id="pointsList" class="points-input"></div><button type="button" class="add-point-btn"
+                        onclick="addPointInput()">+ Nöqtə Əlavə Et</button>
+                </div>
+                <div class="form-group"><label>Sıra</label><input type="number" id="phaseOrder" value="1" min="1"></div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;"><button type="submit" class="btn btn-success"
+                        style="flex: 1;">Yadda Saxla</button><button type="button" class="btn btn-secondary"
+                        style="flex: 1;" onclick="closeModal()">Ləğv Et</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="messageModal" class="message-modal">
+        <div class="message-modal-content">
+            <div class="message-detail">
+                <h3>Mesaj Detalları</h3>
+                <div class="message-detail-row"><strong>Ad:</strong><span id="messageDetailName"></span></div>
+                <div class="message-detail-row"><strong>Email:</strong><span id="messageDetailEmail"></span></div>
+                <div class="message-detail-row"><strong>Şirkət:</strong><span id="messageDetailCompany"></span></div>
+                <div class="message-detail-row"><strong>Telefon:</strong><span id="messageDetailPhone"></span></div>
+                <div class="message-detail-row"><strong>Xidmət:</strong><span id="messageDetailService"></span></div>
+                <div class="message-detail-row"><strong>Tarix:</strong><span id="messageDetailDate"></span></div>
+                <div class="message-detail-row"><strong>Mesaj:</strong>
+                    <p id="messageDetailText" style="white-space: pre-wrap; margin: 0.5rem 0; color: #666;"></p>
+                </div>
+                <div style="display: flex; gap: 1rem;"><button class="btn btn-secondary"
+                        onclick="closeMessageModal()">Bağla</button><button class="btn btn-danger"
+                        onclick="deleteMessage()">Sil</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="faqModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="faqModalTitle">Yeni Sual Əlavə Et</h2><button class="close-btn"
+                    onclick="closeFaqModal()">&times;</button>
+            </div>
+            <form id="faqForm" onsubmit="handleFaqSubmit(event)">
+                <div class="form-group"><label>Sual*</label><input type="text" id="faqQuestion" required></div>
+                <div class="form-group"><label>Cavab*</label><textarea id="faqAnswer" required rows="5"></textarea>
+                </div>
+                <div class="form-group"><label>Sıra</label><input type="number" id="faqOrder" value="1" min="1"></div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;"><button type="submit" class="btn btn-success"
+                        style="flex: 1;">Yadda Saxla</button><button type="button" class="btn btn-secondary"
+                        style="flex: 1;" onclick="closeFaqModal()">Ləğv Et</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="vacancyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="vacancyModalTitle">Yeni Vakansiya Əlavə Et</h2><button class="close-btn"
+                    onclick="closeVacancyModal()">&times;</button>
+            </div>
+            <form id="vacancyForm" onsubmit="handleVacancySubmit(event)">
+                <div class="form-group"><label>Vəzifə Adı *</label><input type="text" id="vacancyTitle" required></div>
+                <div class="form-group"><label>Tip *</label><select id="vacancyType" required>
+                        <option value="Tam Vaxt">Tam Vaxt</option>
+                        <option value="Yarım Vaxt">Yarım Vaxt</option>
+                        <option value="Müqavilə">Müqavilə</option>
+                        <option value="Praktikant">Praktikant</option>
+                    </select></div>
+                <div class="form-group"><label>Şəhər *</label><input type="text" id="vacancyLocation" required></div>
+                <div class="form-group"><label>Maaş *</label><input type="text" id="vacancySalary" required></div>
+                <div class="form-group"><label>Tələb olunan Təcrübə *</label><input type="text" id="vacancyExperience"
+                        required></div>
+                <div class="form-group"><label>Təsvir *</label><textarea id="vacancyDescription" required
+                        style="min-height: 150px;"></textarea></div>
+                <div class="form-group"><label>Sıra</label><input type="number" id="vacancyOrder" value="1" min="1">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;"><button type="submit" class="btn btn-success"
+                        style="flex: 1;">Yadda Saxla</button><button type="button" class="btn btn-secondary"
+                        style="flex: 1;" onclick="closeVacancyModal()">Ləğv Et</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="serviceModalTitle">Yeni Xidmət Əlavə Et</h2><button class="close-btn"
+                    onclick="closeServiceModal()">&times;</button>
+            </div>
+            <form id="serviceForm" onsubmit="handleServiceSubmit(event)">
+                <div class="form-group"><label>Başlıq *</label><input type="text" id="serviceTitle" required></div>
+                <div class="form-group"><label>İkon (Emoji) *</label><input type="text" id="serviceIcon" required></div>
+                <div class="form-group"><label>Təsvir *</label><textarea id="serviceDescription" required
+                        rows="4"></textarea></div>
+                <div class="form-group"><label>Sıra</label><input type="number" id="serviceOrder" value="1" min="1">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;"><button type="submit" class="btn btn-success"
+                        style="flex: 1;">Yadda Saxla</button><button type="button" class="btn btn-secondary"
+                        style="flex: 1;" onclick="closeServiceModal()">Ləğv Et</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="teamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="teamModalTitle">Yeni Üzv Əlavə Et</h2><button class="close-btn"
+                    onclick="closeTeamModal()">&times;</button>
+            </div>
+            <form id="teamForm" onsubmit="handleTeamSubmit(event)">
+                <div class="form-group"><label>Ad Soyad *</label><input type="text" id="teamName" required></div>
+                <div class="form-group"><label>Vəzifə *</label><input type="text" id="teamPosition" required></div>
+                <div class="form-group"><label>Şəkil</label>
+                    <div class="upload-controls"><input type="file" id="teamImageFile" accept="image/*"><span
+                            class="upload-status"></span></div><input type="hidden" id="teamImage">
+                    <div id="teamImagePreview" class="image-preview-container"></div>
+                </div>
+                <div class="form-group"><label>Bio</label><textarea id="teamBio" rows="3"></textarea></div>
+                <div class="form-group"><label>Sıra</label><input type="number" id="teamOrder" value="1" min="1"></div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;"><button type="submit" class="btn btn-success"
+                        style="flex: 1;">Yadda Saxla</button><button type="button" class="btn btn-secondary"
+                        style="flex: 1;" onclick="closeTeamModal()">Ləğv Et</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="appModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="appModalTitle">Yeni Tətbiq Əlavə Et</h2><button class="close-btn"
+                    onclick="closeAppModal()">&times;</button>
+            </div>
+            <form id="appForm" onsubmit="handleAppSubmit(event)">
+                <div class="form-group"><label>Ad *</label><input type="text" id="appName" required></div>
+                <div class="form-group"><label>Kateqoriya *</label><input type="text" id="appCategory" required
+                        list="appCategoryList"><datalist id="appCategoryList">
+                        <option value="Satış">
+                        <option value="Maliyyə">
+                        <option value="İnventar və İstehsalat">
+                        <option value="İnsan Resursları (HR)">
+                        <option value="Marketinq">
+                        <option value="Xidmətlər">
+                        <option value="Digər">
+                    </datalist></div>
+                <div class="form-group"><label>İkon (Emoji) *</label><input type="text" id="appIcon" required></div>
+                <div class="form-group"><label>Təsvir *</label><textarea id="appDescription" required
+                        rows="3"></textarea></div>
+                <div class="form-group"><label>Xüsusiyyətlər (Hər sətirdə birini yazın)</label><textarea
+                        id="appFeatures" rows="5"></textarea></div>
+                <div class="form-group"><label>Sıra</label><input type="number" id="appOrder" value="1" min="1"></div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;"><button type="submit" class="btn btn-success"
+                        style="flex: 1;">Yadda Saxla</button><button type="button" class="btn btn-secondary"
+                        style="flex: 1;" onclick="closeAppModal()">Ləğv Et</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="testimonialModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="testimonialModalTitle">Yeni Rəy Əlavə Et</h2><button class="close-btn"
+                    onclick="closeTestimonialModal()">&times;</button>
+            </div>
+            <form id="testimonialForm" onsubmit="handleTestimonialSubmit(event)">
+                <div class="form-group"><label>Müəllif *</label><input type="text" id="testAuthor" required></div>
+                <div class="form-group"><label>Vəzifə *</label><input type="text" id="testPosition" required></div>
+                <div class="form-group"><label>Rəy *</label><textarea id="testQuote" required rows="4"></textarea></div>
+                <div class="form-group"><label>Sıra</label><input type="number" id="testOrder" value="1" min="1"></div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;"><button type="submit" class="btn btn-success"
+                        style="flex: 1;">Yadda Saxla</button><button type="button" class="btn btn-secondary"
+                        style="flex: 1;" onclick="closeTestimonialModal()">Ləğv Et</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="partnerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="partnerModalTitle">Yeni Tərəfdaş Əlavə Et</h2><button class="close-btn"
+                    onclick="closePartnerModal()">&times;</button>
+            </div>
+            <form id="partnerForm" onsubmit="handlePartnerSubmit(event)">
+                <div class="form-group"><label>Ad *</label><input type="text" id="partnerName" required></div>
+                <div class="form-group"><label>Tip *</label><select id="partnerType" required>
+                        <option value="partner">Tərəfdaş (Partner)</option>
+                        <option value="client">Müştəri (Client)</option>
+                    </select></div>
+                <div class="form-group"><label>Logo *</label>
+                    <div class="upload-controls"><input type="file" id="partnerLogoFile" accept="image/*"><span
+                            class="upload-status"></span></div><input type="hidden" id="partnerLogo">
+                    <div id="partnerLogoPreview" class="image-preview-container"></div>
+                </div>
+                <div class="form-group"><label>Sıra</label><input type="number" id="partnerOrder" value="1" min="1">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;"><button type="submit" class="btn btn-success"
+                        style="flex: 1;">Yadda Saxla</button><button type="button" class="btn btn-secondary"
+                        style="flex: 1;" onclick="closePartnerModal()">Ləğv Et</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="industryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="industryModalTitle">Yeni Sənaye Əlavə Et</h2><button class="close-btn"
+                    onclick="closeIndustryModal()">&times;</button>
+            </div>
+            <form id="industryForm" onsubmit="handleIndustrySubmit(event)">
+                <div class="form-group"><label>Ad *</label><input type="text" id="industryName" required></div>
+                <div class="form-group"><label>İkon (Emoji) *</label><input type="text" id="industryIcon" required>
+                </div>
+                <div class="form-group"><label>Təsvir *</label><textarea id="industryDescription" required
+                        rows="3"></textarea></div>
+                <div class="form-group"><label>Sıra</label><input type="number" id="industryOrder" value="1" min="1">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;"><button type="submit" class="btn btn-success"
+                        style="flex: 1;">Yadda Saxla</button><button type="button" class="btn btn-secondary"
+                        style="flex: 1;" onclick="closeIndustryModal()">Ləğv Et</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="blogModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="blogModalTitle">Yeni Blog Əlavə Et</h2><button class="close-btn"
+                    onclick="closeBlogModal()">&times;</button>
+            </div>
+            <form id="blogForm" onsubmit="handleBlogSubmit(event)">
+                <div class="form-group"><label>Başlıq *</label><input type="text" id="blogTitle" required
+                        oninput="generateSlug(this.value)"></div>
+                <div class="form-group"><label>Slug (URL hissəsi) *</label><input type="text" id="blogSlug" required>
+                </div>
+                <div class="form-group"><label>Müəllif</label><input type="text" id="blogAuthor" value="Admin"></div>
+                <div class="form-group"><label>Kateqoriya</label><input type="text" id="blogCategory"
+                        list="categoryList"><datalist id="categoryList">
+                        <option value="Ümumi">
+                        <option value="Texnologiya">
+                        <option value="Xəbərlər">
+                    </datalist></div>
+                <div class="form-group"><label>Qısa Məzmun *</label><textarea id="blogExcerpt" required
+                        rows="3"></textarea></div>
+                <div class="form-group"><label>Tam Məzmun (HTML Dəstəklənir)</label><textarea id="blogContent"
+                        rows="10"></textarea></div>
+                <div class="form-group"><label>Şəkil</label>
+                    <div class="upload-controls">
+                        <input type="file" id="blogImageFile" accept="image/*">
+                        <button type="button" class="btn btn-danger" style="padding: 0.2rem 0.5rem;"
+                            onclick="clearUpload('blogImage')" title="Şəkli sil">🗑️</button>
+                        <span class="upload-status"></span>
+                    </div>
+                    <input type="hidden" id="blogImage">
+                    <div id="blogImagePreview" class="image-preview-container"></div>
+                </div>
+                <div class="form-group"><label>İkon (Emoji)</label>
+                    <input type="text" id="blogIcon" value="📰" maxlength="4"
+                        placeholder="Məsələn: 🚀, 💡, 📈">
+                    <small style="color:#777;">Şəkil seçilmədikdə kartda bu ikon göstərilir.</small>
+                </div>
+                <div class="form-group"><label>Video (Opsional)</label>
+                    <div class="upload-controls">
+                        <input type="file" id="blogVideoFile" accept="video/*">
+                        <button type="button" class="btn btn-danger" style="padding: 0.2rem 0.5rem;"
+                            onclick="clearUpload('blogVideo')" title="Videonu sil">🗑️</button>
+                        <span class="upload-status"></span>
+                    </div>
+                    <input type="hidden" id="blogVideo">
+                    <div id="blogVideoPreview" class="image-preview-container"></div>
+                </div>
+                <div class="form-group"><label><input type="checkbox" id="blogFeatured"> Seçilmiş (Featured)</label>
+                </div>
+                <div class="form-group"><label>Sıra</label><input type="number" id="blogOrder" value="1" min="1"></div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;"><button type="submit" class="btn btn-success"
+                        style="flex: 1;">Yadda Saxla</button><button type="button" class="btn btn-secondary"
+                        style="flex: 1;" onclick="closeBlogModal()">Ləğv Et</button></div>
+            </form>
+        </div>
+    </div>
+    <script src="js/api-config.js?v=3"></script>
+    <script>
+        const API_URL = typeof BASE_API_URL !== 'undefined' ? BASE_API_URL : 'https://blackdots-2.onrender.com/api';
+
+        // Helper function to get full URL for images/videos
+        function getFullPath(path) {
+            if (!path) return '';
+            if (path.startsWith('http')) return path;
+            const baseUrl = 'https://blackdots-2.onrender.com';
+            return path.startsWith('/') ? `${baseUrl}${path}` : `${baseUrl}/${path}`;
+        }
+
+        // Image Upload Function
+        async function uploadImage(fileInput) {
+            const file = fileInput.files[0];
+            if (!file) return null;
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                const container = fileInput.parentElement;
+                let statusSpan = container.querySelector('.upload-status');
+                if (!statusSpan) { statusSpan = document.createElement('span'); statusSpan.className = 'upload-status'; container.appendChild(statusSpan); }
+                statusSpan.textContent = ' ⏳ Yüklənir...';
+                statusSpan.style.color = 'orange';
+                const response = await fetchWithAuth(`${API_URL}/upload`, { method: 'POST', body: formData });
+                if (!response.ok) throw new Error('Upload failed');
+                const data = await response.json();
+                statusSpan.textContent = ' ✅ Hazırdır';
+                statusSpan.style.color = 'green';
+                setTimeout(() => { if (statusSpan) statusSpan.textContent = ''; }, 2000);
+                return data.url;
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Şəkil yüklənərkən xəta baş verdi.');
+                return null;
+            }
+        }
+        function setupImageUpload(input, hiddenId, previewId) {
+            if (!input) return;
+            input.addEventListener('change', async function () {
+                const url = await uploadImage(this);
+                if (url) {
+                    document.getElementById(hiddenId).value = url;
+                    const preview = document.getElementById(previewId);
+                    if (preview) {
+                        const fullUrl = getFullPath(url);
+                        if (this.accept && this.accept.includes('video')) preview.innerHTML = `<video src="${fullUrl}" controls style="width:100%"></video>`;
+                        else preview.innerHTML = `<img src="${fullUrl}" alt="Preview">`;
+                    }
+                }
+            });
+        }
+
+        function clearUpload(baseId) {
+            const hiddenInput = document.getElementById(baseId);
+            if (hiddenInput) hiddenInput.value = '';
+
+            const fileInput = document.getElementById(baseId + 'File');
+            if (fileInput) fileInput.value = '';
+
+            const preview = document.getElementById(baseId + 'Preview');
+            if (preview) preview.innerHTML = '';
+        }
+
+        let currentPhaseId = null;
+        let currentMessageId = null;
+        let currentFaqId = null;
+        let currentVacancyId = null;
+        let currentServiceId = null;
+        let currentTeamId = null;
+        let currentAppId = null;
+        let currentTestimonialId = null;
+        let currentPartnerId = null;
+        let currentIndustryId = null;
+        let currentBlogId = null;
+        let fetchedBlog = null;
+
+        // Login Logic
+        // Validate JWT expiry client-side without a library
+        function isTokenValid(token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                // Treat token as expired 5 minutes before actual expiry
+                const BUFFER_MS = 5 * 60 * 1000;
+                return payload.exp * 1000 - BUFFER_MS > Date.now();
+            } catch (e) {
+                return false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('adminToken');
+            if (token && isTokenValid(token)) {
+                showDashboard();
+            } else if (token) {
+                // Token expired — remove silently
+                localStorage.removeItem('adminToken');
+            }
+
+            // Setup other things transparently
+            setupImageUpload(document.getElementById('blogImageFile'), 'blogImage', 'blogImagePreview');
+            setupImageUpload(document.getElementById('blogVideoFile'), 'blogVideo', 'blogVideoPreview');
+            setupImageUpload(document.getElementById('teamImageFile'), 'teamImage', 'teamImagePreview');
+            setupImageUpload(document.getElementById('partnerLogoFile'), 'partnerLogo', 'partnerLogoPreview');
+        });
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('adminToken', data.token);
+                    showDashboard();
+                } else {
+                    errorDiv.textContent = data.detail || data.error || 'Xəta baş verdi';
+                }
+            } catch (error) {
+                console.error(error);
+                errorDiv.textContent = 'Server xətası!';
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = 'block';
+            // Load data only after login to prevent unauthorized visibility (though API is public, UI is hidden)
+            loadPhases(); loadMessages(); loadFaqs(); loadVacancies(); loadApplications(); loadServices(); loadTeam(); loadApps(); loadTestimonials(); loadPartners(); loadIndustries(); loadBlogs();
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.reload();
+        }
+
+        async function fetchWithAuth(url, options = {}) {
+            const token = localStorage.getItem('adminToken');
+            options.headers = options.headers || {};
+            options.headers['Authorization'] = 'Bearer ' + token;
+
+            if (options.body && !(options.body instanceof FormData) && !options.headers['Content-Type']) {
+                options.headers['Content-Type'] = 'application/json';
+            }
+
+            const response = await fetch(url, options);
+            if (response.status === 401) {
+                alert('Sessiya müddəti bitib və ya icazəniz yoxdur. Yenidən giriş edin.');
+                logout();
+                throw new Error('Unauthorized');
+            }
+            return response;
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            const tab = document.getElementById(tabName);
+            if (tab) tab.classList.add('active');
+            const btn = Array.from(document.querySelectorAll('.tab-button')).find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${tabName}'`));
+            if (btn) btn.classList.add('active');
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            setTimeout(() => { messageDiv.textContent = ''; messageDiv.className = ''; }, 3000);
+        }
+
+        // Phases
+        async function loadPhases() { try { const res = await fetch(`${API_URL}/phases`); displayPhases(await res.json()); } catch (error) { console.error(error); } }
+        function displayPhases(phases) {
+            const container = document.getElementById('phasesList');
+            container.innerHTML = '';
+            if (!phases || !phases.length) { container.innerHTML = '<p>Faza tapılmadı</p>'; return; }
+            phases.forEach(phase => {
+                const card = document.createElement('div'); card.className = 'phase-card';
+                card.innerHTML = `<h3>${phase.icon} ${phase.title}</h3><p><strong>${phase.subtitle}</strong></p><p>${phase.description.substring(0, 100)}...</p><div class="phase-actions"><button class="btn btn-primary" onclick="editPhase('${phase.id}')">Redaktə Et</button><button class="btn btn-danger" onclick="deletePhase('${phase.id}')">Sil</button></div>`;
+                container.appendChild(card);
+            });
+        }
+        function openAddModal() { currentPhaseId = null; document.getElementById('modalTitle').textContent = 'Yeni Faza Əlavə Et'; document.getElementById('phaseForm').reset(); document.getElementById('phaseId').disabled = false; document.getElementById('pointsList').innerHTML = ''; addPointInput(); document.getElementById('modal').classList.add('active'); }
+        async function editPhase(id) {
+            const res = await fetch(`${API_URL}/phases/${id}`); const phase = await res.json();
+            currentPhaseId = id; document.getElementById('modalTitle').textContent = 'Faza Redaktə Et'; document.getElementById('phaseId').value = phase.id; document.getElementById('phaseId').disabled = true; document.getElementById('phaseTitle').value = phase.title; document.getElementById('phaseSubtitle').value = phase.subtitle; document.getElementById('phaseIcon').value = phase.icon; document.getElementById('phaseDesc1').value = phase.description; document.getElementById('phaseDesc2').value = phase.description2 || ''; document.getElementById('phaseButtonText').value = phase.buttonText; document.getElementById('phaseOrder').value = phase.order;
+            document.getElementById('pointsList').innerHTML = ''; phase.points.forEach(point => addPointInput(point)); document.getElementById('modal').classList.add('active');
+        }
+        function closeModal() { document.getElementById('modal').classList.remove('active'); document.getElementById('phaseForm').reset(); currentPhaseId = null; }
+        function addPointInput(value = '') { const div = document.createElement('div'); div.className = 'point-item'; div.innerHTML = `<input type="text" placeholder="Nöqtə" value="${value}"><button type="button" onclick="this.parentElement.remove()">Sil</button>`; document.getElementById('pointsList').appendChild(div); }
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const points = Array.from(document.querySelectorAll('#pointsList input')).map(i => i.value).filter(v => v.trim() !== '');
+            const data = { id: document.getElementById('phaseId').value, title: document.getElementById('phaseTitle').value, subtitle: document.getElementById('phaseSubtitle').value, description: document.getElementById('phaseDesc1').value, description2: document.getElementById('phaseDesc2').value, icon: document.getElementById('phaseIcon').value, points: points, buttonText: document.getElementById('phaseButtonText').value, order: parseInt(document.getElementById('phaseOrder').value) };
+            const method = currentPhaseId ? 'PUT' : 'POST'; const url = currentPhaseId ? `${API_URL}/phases/${currentPhaseId}` : `${API_URL}/phases`;
+            const resPhase = await fetchWithAuth(url, { method, body: JSON.stringify(data) });
+            if (!resPhase.ok) {
+                const err = await resPhase.json().catch(() => ({}));
+                showMessage(err.detail || 'Yadda saxlamaq alınmadı', 'error'); return;
+            }
+            closeModal(); loadPhases(); showMessage('Faza uğurla yadda saxlanıldı!', 'success');
+        }
+        async function deletePhase(id) { if (confirm('Bu faza silinsin mi?')) { await fetchWithAuth(`${API_URL}/phases/${id}`, { method: 'DELETE' }); loadPhases(); showMessage('Faza silindi!', 'success'); } }
+
+        // Messages
+        async function loadMessages() { try { const res = await fetchWithAuth(`${API_URL}/messages`); displayMessages(await res.json()); } catch (error) { console.error(error); } }
+        function displayMessages(messages) {
+            const tbody = document.getElementById('messagesTableBody'); tbody.innerHTML = '';
+            if (!messages.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Mesaj yoxdur</td></tr>'; return; }
+            messages.forEach(msg => {
+                const row = document.createElement('tr'); row.className = `message-row ${!msg.read ? 'unread' : ''}`;
+                row.innerHTML = `<td>${msg.name}</td><td>${msg.email}</td><td>${msg.phone}</td><td>${msg.service || '-'}</td><td>${new Date(msg.date).toLocaleString('az-AZ')}</td><td><div class="message-actions"><button class="btn btn-small btn-primary" onclick='viewMessage(${JSON.stringify(msg)})'>Bax</button></div></td>`;
+                tbody.appendChild(row);
+            });
+        }
+        function viewMessage(msg) {
+            currentMessageId = typeof msg === 'string' ? msg : msg.id; // Handle both ID and object if needed, but displayMessages passes object
+            // If msg is object passed from onclick
+            if (typeof msg === 'object') {
+                document.getElementById('messageDetailName').textContent = msg.name;
+                document.getElementById('messageDetailEmail').textContent = msg.email;
+                document.getElementById('messageDetailPhone').textContent = msg.phone;
+                document.getElementById('messageDetailService').textContent = msg.service;
+                document.getElementById('messageDetailDate').textContent = new Date(msg.date).toLocaleString('az-AZ');
+                document.getElementById('messageDetailText').textContent = msg.message;
+                document.getElementById('messageModal').classList.add('show');
+                if (!msg.read) toggleMessageRead(msg.id, false);
+            } else {
+                // Fetch if needed, but we pass object for simplicity
+            }
+        }
+        function closeMessageModal() { document.getElementById('messageModal').classList.remove('show'); currentMessageId = null; }
+        async function toggleMessageRead(id, currentRead) { await fetchWithAuth(`${API_URL}/messages/${id}`, { method: 'PUT', body: JSON.stringify({ read: !currentRead }) }); loadMessages(); }
+        async function deleteMessage() { if (currentMessageId && confirm('Bu mesaj silinsin mi?')) { await fetchWithAuth(`${API_URL}/messages/${currentMessageId}`, { method: 'DELETE' }); closeMessageModal(); loadMessages(); showMessage('Mesaj silindi!', 'success'); } }
+
+        // FAQs
+        async function loadFaqs() { try { const res = await fetch(`${API_URL}/faqs`); displayFaqs(await res.json()); } catch (error) { console.error(error); } }
+        function displayFaqs(faqs) {
+            const container = document.getElementById('faqsList'); container.innerHTML = '';
+            faqs.forEach(faq => {
+                const card = document.createElement('div'); card.className = 'phase-card';
+                card.innerHTML = `<h3>❓ ${faq.question}</h3><p>${faq.answer.substring(0, 100)}...</p><div class="phase-actions"><button class="btn btn-primary" onclick="editFaq('${faq.id}')">Redaktə Et</button><button class="btn btn-danger" onclick="deleteFaq('${faq.id}')">Sil</button></div>`;
+                container.appendChild(card);
+            });
+        }
+        function openAddFaqModal() { currentFaqId = null; document.getElementById('faqModalTitle').textContent = 'Yeni Sual Əlavə Et'; document.getElementById('faqForm').reset(); document.getElementById('faqModal').classList.add('active'); }
+        function closeFaqModal() { document.getElementById('faqModal').classList.remove('active'); }
+        async function editFaq(id) { const res = await fetch(`${API_URL}/faqs/${id}`); if (!res.ok) { showMessage('FAQ tapılmadı', 'error'); return; } const faq = await res.json(); currentFaqId = id; document.getElementById('faqModalTitle').textContent = 'Sualı Redaktə Et'; document.getElementById('faqQuestion').value = faq.question; document.getElementById('faqAnswer').value = faq.answer; document.getElementById('faqOrder').value = faq.order; document.getElementById('faqModal').classList.add('active'); }
+        async function handleFaqSubmit(e) { e.preventDefault(); const data = { question: document.getElementById('faqQuestion').value, answer: document.getElementById('faqAnswer').value, order: parseInt(document.getElementById('faqOrder').value) }; const method = currentFaqId ? 'PUT' : 'POST'; const url = currentFaqId ? `${API_URL}/faqs/${currentFaqId}` : `${API_URL}/faqs`; const resFaq = await fetchWithAuth(url, { method, body: JSON.stringify(data) }); if (!resFaq.ok) { const err = await resFaq.json().catch(() => ({})); showMessage(err.detail || 'Yadda saxlamaq alınmadı', 'error'); return; } closeFaqModal(); loadFaqs(); showMessage('Sual yadda saxlanıldı!', 'success'); }
+        async function deleteFaq(id) { if (confirm('Bu sual silinsin mi?')) { await fetchWithAuth(`${API_URL}/faqs/${id}`, { method: 'DELETE' }); loadFaqs(); showMessage('Sual silindi!', 'success'); } }
+
+        // Vacancies
+        async function loadVacancies() { try { const res = await fetch(`${API_URL}/vacancies`); displayVacancies(await res.json()); } catch (error) { console.error(error); } }
+        function displayVacancies(items) {
+            const list = document.getElementById('vacanciesList'); list.innerHTML = '';
+            items.forEach(v => {
+                const card = document.createElement('div'); card.className = 'phase-card';
+                card.innerHTML = `<h3>${v.title}</h3><p><strong>Tip:</strong> ${v.type}</p><p><strong>Şəhər:</strong> ${v.location}</p><div class="phase-actions"><button class="btn btn-secondary" onclick="editVacancy('${v.id}')">Redaktə</button><button class="btn btn-danger" onclick="deleteVacancy('${v.id}')">Sil</button></div>`;
+                list.appendChild(card);
+            });
+        }
+        function openAddVacancyModal() { currentVacancyId = null; document.getElementById('vacancyForm').reset(); document.getElementById('vacancyModalTitle').textContent = 'Yeni Vakansiya Əlavə Et'; document.getElementById('vacancyModal').classList.add('active'); }
+        function closeVacancyModal() { document.getElementById('vacancyModal').classList.remove('active'); }
+        async function editVacancy(id) { const res = await fetch(`${API_URL}/vacancies/${id}`); if (!res.ok) { showMessage('Vakansiya tapılmadı', 'error'); return; } const v = await res.json(); currentVacancyId = id; document.getElementById('vacancyTitle').value = v.title; document.getElementById('vacancyType').value = v.type; document.getElementById('vacancyLocation').value = v.location; document.getElementById('vacancySalary').value = v.salary; document.getElementById('vacancyExperience').value = v.experience; document.getElementById('vacancyDescription').value = v.description; document.getElementById('vacancyOrder').value = v.order; document.getElementById('vacancyModalTitle').textContent = 'Vakansiya Redaktə Et'; document.getElementById('vacancyModal').classList.add('active'); }
+        async function handleVacancySubmit(e) { e.preventDefault(); const data = { title: document.getElementById('vacancyTitle').value, type: document.getElementById('vacancyType').value, location: document.getElementById('vacancyLocation').value, salary: document.getElementById('vacancySalary').value, experience: document.getElementById('vacancyExperience').value, description: document.getElementById('vacancyDescription').value, order: parseInt(document.getElementById('vacancyOrder').value) }; const method = currentVacancyId ? 'PUT' : 'POST'; const url = currentVacancyId ? `${API_URL}/vacancies/${currentVacancyId}` : `${API_URL}/vacancies`; const resVac = await fetchWithAuth(url, { method, body: JSON.stringify(data) }); if (!resVac.ok) { const err = await resVac.json().catch(() => ({})); showMessage(err.detail || 'Yadda saxlamaq alınmadı', 'error'); return; } closeVacancyModal(); loadVacancies(); showMessage('Vakansiya yadda saxlanıldı', 'success'); }
+        async function deleteVacancy(id) { if (confirm('Silmək istəyirsiniz?')) { await fetchWithAuth(`${API_URL}/vacancies/${id}`, { method: 'DELETE' }); loadVacancies(); showMessage('Silindi', 'success'); } }
+
+        // Applications
+        async function loadApplications() { const res = await fetch(`${API_URL}/applications`); const apps = await res.json(); const filter = document.getElementById('applicationFilter').value; displayApplications(filter ? apps.filter(a => a.status === filter) : apps); }
+        function displayApplications(apps) {
+            const list = document.getElementById('applicationsList'); list.innerHTML = '';
+            if (!apps.length) { list.innerHTML = '<p>Müraciət yoxdur</p>'; return; }
+            const statusMap = { pending: '⏳ Gözləmədə', reviewed: '👁️️ Nəzərdən Keçirildi', rejected: '❌ Rədd Edildi' };
+            apps.forEach(app => {
+                const card = document.createElement('div'); card.className = 'phase-card';
+                card.innerHTML = `<h3>${app.name}</h3><p><strong>Vakansiya:</strong> ${app.vacancyId}</p><p><strong>Status:</strong> ${statusMap[app.status] || app.status}</p><div class="phase-actions"><select onchange="updateApplicationStatus('${app.id}', this.value)" style="padding:0.5rem"><option value="pending" ${app.status === 'pending' ? 'selected' : ''}>Gözləmədə</option><option value="reviewed" ${app.status === 'reviewed' ? 'selected' : ''}>Nəzərdən Keçirildi</option><option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Rədd Edildi</option></select><button class="btn btn-danger" onclick="deleteApplication('${app.id}')">Sil</button></div>`;
+                list.appendChild(card);
+            });
+        }
+        async function updateApplicationStatus(id, status) { await fetchWithAuth(`${API_URL}/applications/${id}`, { method: 'PUT', body: JSON.stringify({ status }) }); loadApplications(); showMessage('Status yeniləndi', 'success'); }
+        async function deleteApplication(id) { if (confirm('Silmək istəyirsiniz?')) { await fetchWithAuth(`${API_URL}/applications/${id}`, { method: 'DELETE' }); loadApplications(); showMessage('Silindi', 'success'); } }
+
+        // Services
+        async function loadServices() { const res = await fetch(`${API_URL}/services`); displayServices(await res.json()); }
+        function displayServices(items) { const list = document.getElementById('servicesList'); list.innerHTML = ''; items.forEach(i => { const card = document.createElement('div'); card.className = 'phase-card'; card.innerHTML = `<h3>${i.icon} ${i.title}</h3><p>${i.description}</p><div class="phase-actions"><button class="btn btn-secondary" onclick="editService('${i.id}')">Redaktə</button><button class="btn btn-danger" onclick="deleteService('${i.id}')">Sil</button></div>`; list.appendChild(card); }); }
+        function openServiceModal() { currentServiceId = null; document.getElementById('serviceForm').reset(); document.getElementById('serviceModalTitle').textContent = 'Yeni Xidmət Əlavə Et'; document.getElementById('serviceModal').classList.add('active'); }
+        function closeServiceModal() { document.getElementById('serviceModal').classList.remove('active'); }
+        function editService(id) { fetch(`${API_URL}/services/${id}`).then(r => r.json()).then(s => { currentServiceId = s.id; document.getElementById('serviceTitle').value = s.title; document.getElementById('serviceIcon').value = s.icon; document.getElementById('serviceDescription').value = s.description; document.getElementById('serviceOrder').value = s.order; document.getElementById('serviceModalTitle').textContent = 'Xidməti Redaktə Et'; document.getElementById('serviceModal').classList.add('active'); }); }
+        async function handleServiceSubmit(e) { e.preventDefault(); const data = { title: document.getElementById('serviceTitle').value, icon: document.getElementById('serviceIcon').value, description: document.getElementById('serviceDescription').value, order: parseInt(document.getElementById('serviceOrder').value) }; const method = currentServiceId ? 'PUT' : 'POST'; const url = currentServiceId ? `${API_URL}/services/${currentServiceId}` : `${API_URL}/services`; const resSvc = await fetchWithAuth(url, { method, body: JSON.stringify(data) }); if (!resSvc.ok) { const err = await resSvc.json().catch(() => ({})); showMessage(err.detail || 'Yadda saxlamaq alınmadı', 'error'); return; } closeServiceModal(); loadServices(); showMessage('Xidmət yadda saxlanıldı', 'success'); }
+        async function deleteService(id) { if (confirm('Silmək istəyirsiniz?')) { await fetchWithAuth(`${API_URL}/services/${id}`, { method: 'DELETE' }); loadServices(); showMessage('Silindi', 'success'); } }
+
+        // Team
+        async function loadTeam() { const res = await fetch(`${API_URL}/team`); displayTeam(await res.json()); }
+        function displayTeam(items) { const list = document.getElementById('teamList'); list.innerHTML = ''; items.forEach(i => { const card = document.createElement('div'); card.className = 'phase-card'; card.innerHTML = `<div style="display:flex; gap:1rem; align-items:center;"><img src="${getFullPath(i.image)}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;"><div><h3>${i.name}</h3><p>${i.position}</p></div></div><div class="phase-actions"><button class="btn btn-secondary" onclick="editTeam('${i.id}')">Redaktə</button><button class="btn btn-danger" onclick="deleteTeam('${i.id}')">Sil</button></div>`; list.appendChild(card); }); }
+        function openTeamModal() { currentTeamId = null; document.getElementById('teamForm').reset(); document.getElementById('teamImagePreview').innerHTML = ''; document.getElementById('teamModalTitle').textContent = 'Yeni Üzv Əlavə Et'; document.getElementById('teamModal').classList.add('active'); }
+        function closeTeamModal() { document.getElementById('teamModal').classList.remove('active'); }
+        function editTeam(id) { fetch(`${API_URL}/team/${id}`).then(r => r.json()).then(t => { currentTeamId = t.id; document.getElementById('teamName').value = t.name; document.getElementById('teamPosition').value = t.position; document.getElementById('teamImage').value = t.image; document.getElementById('teamBio').value = t.bio; document.getElementById('teamOrder').value = t.order; if (t.image) document.getElementById('teamImagePreview').innerHTML = `<img src="${getFullPath(t.image)}">`; document.getElementById('teamModalTitle').textContent = 'Üzvü Redaktə Et'; document.getElementById('teamModal').classList.add('active'); }); }
+        async function handleTeamSubmit(e) { e.preventDefault(); const data = { name: document.getElementById('teamName').value, position: document.getElementById('teamPosition').value, image: document.getElementById('teamImage').value, bio: document.getElementById('teamBio').value, order: parseInt(document.getElementById('teamOrder').value) }; const method = currentTeamId ? 'PUT' : 'POST'; const url = currentTeamId ? `${API_URL}/team/${currentTeamId}` : `${API_URL}/team`; const resTeam = await fetchWithAuth(url, { method, body: JSON.stringify(data) }); if (!resTeam.ok) { const err = await resTeam.json().catch(() => ({})); showMessage(err.detail || 'Yadda saxlamaq alınmadı', 'error'); return; } closeTeamModal(); loadTeam(); showMessage('Üzv yadda saxlanıldı', 'success'); }
+        async function deleteTeam(id) { if (confirm('Silmək istəyirsiniz?')) { await fetchWithAuth(`${API_URL}/team/${id}`, { method: 'DELETE' }); loadTeam(); showMessage('Silindi', 'success'); } }
+
+        // Apps
+        async function loadApps() { const res = await fetch(`${API_URL}/apps`); displayApps(await res.json()); }
+        function displayApps(items) { const list = document.getElementById('appsList'); list.innerHTML = ''; items.forEach(i => { const card = document.createElement('div'); card.className = 'phase-card'; card.innerHTML = `<h3>${i.icon} ${i.name}</h3><p>${i.category}</p><div class="phase-actions"><button class="btn btn-secondary" onclick="editApp('${i.id}')">Redaktə</button><button class="btn btn-danger" onclick="deleteApp('${i.id}')">Sil</button></div>`; list.appendChild(card); }); }
+        function openAppModal() { currentAppId = null; document.getElementById('appForm').reset(); document.getElementById('appModalTitle').textContent = 'Yeni Tətbiq Əlavə Et'; document.getElementById('appModal').classList.add('active'); }
+        function closeAppModal() { document.getElementById('appModal').classList.remove('active'); }
+        function editApp(id) { fetch(`${API_URL}/apps/${id}`).then(r => r.json()).then(a => { currentAppId = a.id; document.getElementById('appName').value = a.name; document.getElementById('appCategory').value = a.category; document.getElementById('appIcon').value = a.icon; document.getElementById('appDescription').value = a.description; document.getElementById('appFeatures').value = a.features ? a.features.join('\n') : ''; document.getElementById('appOrder').value = a.order; document.getElementById('appModalTitle').textContent = 'Tətbiqi Redaktə Et'; document.getElementById('appModal').classList.add('active'); }); }
+        async function handleAppSubmit(e) { e.preventDefault(); const data = { name: document.getElementById('appName').value, category: document.getElementById('appCategory').value, icon: document.getElementById('appIcon').value, description: document.getElementById('appDescription').value, features: document.getElementById('appFeatures').value.split('\n').filter(f => f.trim()), order: parseInt(document.getElementById('appOrder').value) }; const method = currentAppId ? 'PUT' : 'POST'; const url = currentAppId ? `${API_URL}/apps/${currentAppId}` : `${API_URL}/apps`; const resApp = await fetchWithAuth(url, { method, body: JSON.stringify(data) }); if (!resApp.ok) { const err = await resApp.json().catch(() => ({})); showMessage(err.detail || 'Yadda saxlamaq alınmadı', 'error'); return; } closeAppModal(); loadApps(); showMessage('Tətbiq yadda saxlanıldı', 'success'); }
+        async function deleteApp(id) { if (confirm('Silmək istəyirsiniz?')) { await fetchWithAuth(`${API_URL}/apps/${id}`, { method: 'DELETE' }); loadApps(); showMessage('Silindi', 'success'); } }
+
+        // Testimonials
+        async function loadTestimonials() { const res = await fetch(`${API_URL}/testimonials`); displayTestimonials(await res.json()); }
+        function displayTestimonials(items) { const list = document.getElementById('testimonialsList'); list.innerHTML = ''; items.forEach(i => { const card = document.createElement('div'); card.className = 'phase-card'; card.innerHTML = `<h3>${i.author}</h3><p>${i.position}</p><p>"${i.quote}"</p><div class="phase-actions"><button class="btn btn-secondary" onclick="editTestimonial('${i.id}')">Redaktə</button><button class="btn btn-danger" onclick="deleteTestimonial('${i.id}')">Sil</button></div>`; list.appendChild(card); }); }
+        function openTestimonialModal() { currentTestimonialId = null; document.getElementById('testimonialForm').reset(); document.getElementById('testimonialModalTitle').textContent = 'Yeni Rəy Əlavə Et'; document.getElementById('testimonialModal').classList.add('active'); }
+        function closeTestimonialModal() { document.getElementById('testimonialModal').classList.remove('active'); }
+        function editTestimonial(id) { fetch(`${API_URL}/testimonials/${id}`).then(r => r.json()).then(t => { currentTestimonialId = t.id; document.getElementById('testAuthor').value = t.author; document.getElementById('testPosition').value = t.position; document.getElementById('testQuote').value = t.quote; document.getElementById('testOrder').value = t.order; document.getElementById('testimonialModalTitle').textContent = 'Rəyi Redaktə Et'; document.getElementById('testimonialModal').classList.add('active'); }); }
+        async function handleTestimonialSubmit(e) { e.preventDefault(); const data = { author: document.getElementById('testAuthor').value, position: document.getElementById('testPosition').value, quote: document.getElementById('testQuote').value, order: parseInt(document.getElementById('testOrder').value) }; const method = currentTestimonialId ? 'PUT' : 'POST'; const url = currentTestimonialId ? `${API_URL}/testimonials/${currentTestimonialId}` : `${API_URL}/testimonials`; const resTest = await fetchWithAuth(url, { method, body: JSON.stringify(data) }); if (!resTest.ok) { const err = await resTest.json().catch(() => ({})); showMessage(err.detail || 'Yadda saxlamaq alınmadı', 'error'); return; } closeTestimonialModal(); loadTestimonials(); showMessage('Rəy yadda saxlanıldı', 'success'); }
+        async function deleteTestimonial(id) { if (confirm('Silmək istəyirsiniz?')) { await fetchWithAuth(`${API_URL}/testimonials/${id}`, { method: 'DELETE' }); loadTestimonials(); showMessage('Silindi', 'success'); } }
+
+        // Partners
+        async function loadPartners() { const res = await fetch(`${API_URL}/partners`); displayPartners(await res.json()); }
+        function displayPartners(items) { const list = document.getElementById('partnersList'); list.innerHTML = ''; items.forEach(i => { const card = document.createElement('div'); card.className = 'phase-card'; card.innerHTML = `<img src="${getFullPath(i.logo)}" style="height:40px"><p>${i.name}</p><div class="phase-actions"><button class="btn btn-secondary" onclick="editPartner('${i.id}')">Redaktə</button><button class="btn btn-danger" onclick="deletePartner('${i.id}')">Sil</button></div>`; list.appendChild(card); }); }
+        function openPartnerModal() { currentPartnerId = null; document.getElementById('partnerForm').reset(); document.getElementById('partnerLogoPreview').innerHTML = ''; document.getElementById('partnerModalTitle').textContent = 'Yeni Tərəfdaş Əlavə Et'; document.getElementById('partnerModal').classList.add('active'); }
+        function closePartnerModal() { document.getElementById('partnerModal').classList.remove('active'); }
+        function editPartner(id) { fetch(`${API_URL}/partners/${id}`).then(r => r.json()).then(p => { currentPartnerId = p.id; document.getElementById('partnerName').value = p.name; document.getElementById('partnerType').value = p.type; document.getElementById('partnerLogo').value = p.logo; if (p.logo) document.getElementById('partnerLogoPreview').innerHTML = `<img src="${getFullPath(p.logo)}">`; document.getElementById('partnerOrder').value = p.order; document.getElementById('partnerModalTitle').textContent = 'Tərəfdaşı Redaktə Et'; document.getElementById('partnerModal').classList.add('active'); }); }
+        async function handlePartnerSubmit(e) { e.preventDefault(); const data = { name: document.getElementById('partnerName').value, type: document.getElementById('partnerType').value, logo: document.getElementById('partnerLogo').value, order: parseInt(document.getElementById('partnerOrder').value) }; const method = currentPartnerId ? 'PUT' : 'POST'; const url = currentPartnerId ? `${API_URL}/partners/${currentPartnerId}` : `${API_URL}/partners`; const resPart = await fetchWithAuth(url, { method, body: JSON.stringify(data) }); if (!resPart.ok) { const err = await resPart.json().catch(() => ({})); showMessage(err.detail || 'Yadda saxlamaq alınmadı', 'error'); return; } closePartnerModal(); loadPartners(); showMessage('Tərəfdaş yadda saxlanıldı', 'success'); }
+        async function deletePartner(id) { if (confirm('Silmək istəyirsiniz?')) { await fetchWithAuth(`${API_URL}/partners/${id}`, { method: 'DELETE' }); loadPartners(); showMessage('Silindi', 'success'); } }
+
+        // Industries
+        async function loadIndustries() { const res = await fetch(`${API_URL}/industries`); displayIndustries(await res.json()); }
+        function displayIndustries(items) { const list = document.getElementById('industriesList'); list.innerHTML = ''; items.forEach(i => { const card = document.createElement('div'); card.className = 'phase-card'; card.innerHTML = `<h3>${i.icon} ${i.name}</h3><div class="phase-actions"><button class="btn btn-secondary" onclick="editIndustry('${i.id}')">Redaktə</button><button class="btn btn-danger" onclick="deleteIndustry('${i.id}')">Sil</button></div>`; list.appendChild(card); }); }
+        function openIndustryModal() { currentIndustryId = null; document.getElementById('industryForm').reset(); document.getElementById('industryModalTitle').textContent = 'Yeni Sənaye Əlavə Et'; document.getElementById('industryModal').classList.add('active'); }
+        function closeIndustryModal() { document.getElementById('industryModal').classList.remove('active'); }
+        function editIndustry(id) { fetch(`${API_URL}/industries/${id}`).then(r => r.json()).then(i => { currentIndustryId = i.id; document.getElementById('industryName').value = i.name; document.getElementById('industryIcon').value = i.icon; document.getElementById('industryDescription').value = i.description; document.getElementById('industryOrder').value = i.order; document.getElementById('industryModalTitle').textContent = 'Sənayeni Redaktə Et'; document.getElementById('industryModal').classList.add('active'); }); }
+        async function handleIndustrySubmit(e) { e.preventDefault(); const data = { name: document.getElementById('industryName').value, icon: document.getElementById('industryIcon').value, description: document.getElementById('industryDescription').value, order: parseInt(document.getElementById('industryOrder').value) }; const method = currentIndustryId ? 'PUT' : 'POST'; const url = currentIndustryId ? `${API_URL}/industries/${currentIndustryId}` : `${API_URL}/industries`; const resInd = await fetchWithAuth(url, { method, body: JSON.stringify(data) }); if (!resInd.ok) { const err = await resInd.json().catch(() => ({})); showMessage(err.detail || 'Yadda saxlamaq alınmadı', 'error'); return; } closeIndustryModal(); loadIndustries(); showMessage('Sənaye yadda saxlanıldı', 'success'); }
+        async function deleteIndustry(id) { if (confirm('Silmək istəyirsiniz?')) { await fetchWithAuth(`${API_URL}/industries/${id}`, { method: 'DELETE' }); loadIndustries(); showMessage('Silindi', 'success'); } }
+
+        // Blogs
+        async function loadBlogs() { const res = await fetch(`${API_URL}/blogs`); displayBlogs(await res.json()); }
+        function getBlogIcon(blog) { if (blog.icon && blog.icon !== '📰') return blog.icon; const text = `${blog.title || ''} ${blog.category || ''}`.toLowerCase(); if (text.includes('məhsuldarlıq') || text.includes('product')) return '📈'; if (text.includes('məsləhət') || text.includes('erp')) return '💡'; if (text.includes('odoo')) return '🚀'; if (text.includes('rəqəmsal')) return '💻'; return '📰'; }
+        function displayBlogs(items) { const list = document.getElementById('blogsList'); list.innerHTML = ''; items.forEach(b => { const card = document.createElement('div'); card.className = 'phase-card'; card.innerHTML = `<div style="display:flex; gap:1rem; align-items:center;"><div style="width:64px;height:48px;border-radius:6px;overflow:hidden;background:#eee;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">${b.image ? `<img src="${getFullPath(b.image)}" style="width:100%;height:100%;object-fit:cover;">` : getBlogIcon(b)}</div><div><h3>${b.title}</h3><p>${(b.excerpt || '').substring(0, 50)}...</p></div></div><div class="phase-actions"><button class="btn btn-secondary" onclick="editBlog('${b.id}')">Redaktə</button><button class="btn btn-danger" onclick="deleteBlog('${b.id}')">Sil</button></div>`; list.appendChild(card); }); }
+        function generateSlug(val) { document.getElementById('blogSlug').value = val.toLowerCase().replace(/[^a-z0-9]/g, '-'); }
+        function openBlogModal() { currentBlogId = null; fetchedBlog = null; document.getElementById('blogForm').reset(); document.getElementById('blogIcon').value = '📰'; document.getElementById('blogImagePreview').innerHTML = ''; document.getElementById('blogVideoPreview').innerHTML = ''; document.getElementById('blogModalTitle').textContent = 'Yeni Blog Əlavə Et'; document.getElementById('blogModal').classList.add('active'); }
+        function closeBlogModal() { document.getElementById('blogModal').classList.remove('active'); }
+        function editBlog(id) { fetch(`${API_URL}/blogs/${id}`).then(r => r.json()).then(b => { currentBlogId = b.id; fetchedBlog = b; document.getElementById('blogTitle').value = b.title; document.getElementById('blogSlug').value = b.slug; document.getElementById('blogAuthor').value = b.author; document.getElementById('blogCategory').value = b.category; document.getElementById('blogExcerpt').value = b.excerpt; document.getElementById('blogContent').value = b.content; document.getElementById('blogImage').value = b.image || ''; document.getElementById('blogIcon').value = b.icon || '📰'; document.getElementById('blogVideo').value = b.video || ''; document.getElementById('blogFeatured').checked = b.featured; document.getElementById('blogOrder').value = b.order; if (b.image) document.getElementById('blogImagePreview').innerHTML = `<img src="${getFullPath(b.image)}">`; if (b.video) document.getElementById('blogVideoPreview').innerHTML = `<video src="${getFullPath(b.video)}" controls style="width:100%"></video>`; document.getElementById('blogModalTitle').textContent = 'Blogu Redaktə Et'; document.getElementById('blogModal').classList.add('active'); }); }
+        async function handleBlogSubmit(e) { e.preventDefault(); const data = { title: document.getElementById('blogTitle').value, slug: document.getElementById('blogSlug').value, author: document.getElementById('blogAuthor').value, date: (currentBlogId && fetchedBlog) ? fetchedBlog.date : new Date().toISOString(), category: document.getElementById('blogCategory').value, excerpt: document.getElementById('blogExcerpt').value, content: document.getElementById('blogContent').value, image: document.getElementById('blogImage').value, icon: document.getElementById('blogIcon').value || '📰', video: document.getElementById('blogVideo').value, featured: document.getElementById('blogFeatured').checked, order: parseInt(document.getElementById('blogOrder').value) }; const method = currentBlogId ? 'PUT' : 'POST'; const url = currentBlogId ? `${API_URL}/blogs/${currentBlogId}` : `${API_URL}/blogs`; const resBlog = await fetchWithAuth(url, { method, body: JSON.stringify(data) }); if (!resBlog.ok) { const err = await resBlog.json().catch(() => ({})); showMessage(err.detail || 'Yadda saxlamaq alınmadı', 'error'); return; } closeBlogModal(); loadBlogs(); showMessage('Blog yadda saxlanıldı', 'success'); }
+        async function deleteBlog(id) { if (confirm('Silmək istəyirsiniz?')) { await fetchWithAuth(`${API_URL}/blogs/${id}`, { method: 'DELETE' }); loadBlogs(); showMessage('Silindi', 'success'); } }
+        // Password Change Functions
+        function openPasswordModal() {
+            document.getElementById('passwordModal').classList.add('active');
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('active');
+            document.getElementById('passwordForm').reset();
+        }
+
+        async function handlePasswordChange(event) {
+            event.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                alert('Yeni şifrələr üst-üstə düşmür!');
+                return;
+            }
+
+            try {
+                const response = await fetchWithAuth(`${API_URL}/admin/change-password`, {
+                    method: 'POST',
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Şifrə uğurla dəyişdirildi!');
+                    closePasswordModal();
+                } else {
+                    alert(data.error || 'Xəta baş verdi');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Serverlə əlaqə kəsildi');
+            }
+        }
+    </script>
+    <!-- Password Change Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePasswordModal()">&times;</span>
+            <h2 id="modalTitle">Şifrəni Dəyiş</h2>
+            <form id="passwordForm" onsubmit="handlePasswordChange(event)">
+                <div class="form-group">
+                    <label>Hazırkı Şifrə</label>
+                    <input type="password" id="currentPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Yeni Şifrə</label>
+                    <input type="password" id="newPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Yeni Şifrəni Təkrarla</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <button type="submit" class="save-btn">Yadda Saxla</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

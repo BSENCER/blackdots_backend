@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>BlackDots - Əlaqə</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Work+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=202602241211">
+    <link rel="stylesheet" href="css/mobile-responsive.css?v=202602241211">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Black<span>Dots</span></a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Ana Səhifə</a></li>
+                <li><a href="services.html">Xidmətlər</a></li>
+                <li><a href="tekliflerimiz.html">Təkliflərimiz</a></li>
+                <li><a href="apps.html">Odoo Apps</a></li>
+                <li><a href="about.html">Haqqımızda</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="contact.html" class="active">Əlaqə</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="page-header-content">
+            <div class="section-subtitle">Əlaqə</div>
+            <h1>Bizimlə əlaqə saxlayın</h1>
+            <p>Suallarınızı verin, pulsuz məsləhət alın</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="contact-container">
+            <div class="contact-form-area">
+                <h2>Mesaj Göndərin</h2>
+                <p class="form-description">
+                    Formu doldurun, biz 24 saat ərzində sizinlə əlaqə saxlayacağıq
+                </p>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Ad Soyad *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Şirkət</label>
+                            <input type="text" id="company" name="company">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Telefon *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="service">Hansı xidmət ilə maraqlanırsınız?</label>
+                        <select id="service" name="service">
+                            <option value="">Seçin...</option>
+                            <option value="implementation">İmplementasiya</option>
+                            <option value="customization">Fərdiləşdirmə</option>
+                            <option value="migration">Miqrasiya</option>
+                            <option value="training">Təlim</option>
+                            <option value="support">Texniki Dəstək</option>
+                            <option value="consulting">Məsləhət</option>
+                            <option value="other">Digər</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Mesajınız *</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <span>Göndər</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="contact-info-area">
+                <div class="contact-info-card">
+                    <h3>Əlaqə Məlumatları</h3>
+                    <div class="info-item">
+                        <div class="info-icon">📧</div>
+                        <div class="info-content">
+                            <h4>Email</h4>
+                            <p><a href="mailto:info@blackdots.az">info@blackdots.az</a></p>
+                            <p><a href="mailto:support@blackdots.az">support@blackdots.az</a></p>
+                            <p><a href="mailto:sales@blackdots.az">sales@blackdots.az</a></p>
+
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">📞</div>
+                        <div class="quick-buttons">
+                            <a href="https://wa.me/994512051115" class="quick-btn whatsapp">
+                                <span>📱</span> WhatsApp
+                            </a>
+                            <a href="tel:+994512051115" class="quick-btn phone">
+                                <span>☎️</span> Zəng Et
+                            </a>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">📍</div>
+                        <div class="info-content">
+                            <h4>Ünvan</h4>
+                            <p>AZURE BUSINESS CENTER
+                                Ave Nobel 15,Azerbaijan Baku, AZ1025
+                                Floor 19, Office 130</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">🕐</div>
+                        <div class="info-content">
+                            <h4>İş Saatları</h4>
+                            <p>Bazar ertəsi - Cümə: 09:00 - 18:00</p>
+                            <p>Şənbə - Bazar: Bağlı</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-contact">
+                    <h4>Sürətli Əlaqə</h4>
+                    <p>Demo tələb etmək və ya sual vermək üçün:</p>
+                    <div class="quick-buttons">
+                        <a href="https://wa.me/994512051115" class="quick-btn whatsapp">
+                            <span>📱</span> WhatsApp
+                        </a>
+                        <a href="tel:+994512051115" class="quick-btn phone">
+                            <span>☎️</span> Zəng Et
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="map-container">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3039.38799207401!2d49.8753063!3d40.378092699999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40307d5b16f03049%3A0x8b233276e2e00004!2sAzure%20Business%20Center!5e0!3m2!1sen!2saz!4v1769691235405!5m2!1sen!2saz"
+                width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="section-header">
+            <div class="section-subtitle">Tez-tez Verilən Suallar</div>
+            <h2 class="section-title">Suallarınızın cavabları</h2>
+        </div>
+        <div class="faq-container" id="faqContainer">
+            <p style="text-align: center; padding: 2rem; color: #999;">Suallar yüklənir...</p>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-content">
+            <h2>Layihənizə başlamağa hazırsınız?</h2>
+            <p>Pulsuz məsləhət və demo üçün bizimlə əlaqə saxlayın</p>
+            <a href="#contactForm" class="btn-white">Forma Doldur</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <div class="footer-brand">Black<span>Dots</span></div>
+                <p class="footer-about">
+                    Azərbaycanda lider Odoo Ready Partner. Biznes proseslərinin
+                    rəqəmsallaşdırılması və optimallaşdırılması sahəsində ekspert.
+                </p>
+                <div class="odoo-badge">ODOO READY PARTNER</div>
+            </div>
+            <div class="footer-section">
+                <h4>Şirkət</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">Haqqımızda</a></li>
+                    <li><a href="#">Komanda</a></li>
+                    <li><a href="careers.html">Karyera</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Xidmətlər</h4>
+                <ul class="footer-links">
+                    <li><a href="services.html">İmplementasiya</a></li>
+                    <li><a href="services.html">Fərdiləşdirmə</a></li>
+                    <li><a href="services.html">Təlim</a></li>
+                    <li><a href="services.html">Dəstək</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Əlaqə</h4>
+                <ul class="footer-links">
+                    <li><a href="mailto:info@blackdots.az">info@blackdots.az</a></li>
+                    <li><a href="tel:+994512051115">+994 51 205 11 15</a></li>
+                    <li><a href="contact.html">Bakı, Azərbaycan</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 BlackDots. Bütün hüquqlar qorunur.</p>
+        </div>
+    </footer>
+
+    <script src="js/api-config.js?v=3"></script>
+    <script>
+        const API_URL = typeof BASE_API_URL !== 'undefined' ? BASE_API_URL : 'https://blackdots-2.onrender.com/api';
+
+        // Load FAQs from API
+        async function loadFaqs() {
+            try {
+                const response = await fetch(`${API_URL}/faqs`);
+
+                if (!response.ok) {
+                    console.error('Sualları yükləmədə xəta:', response.status);
+                    document.getElementById('faqContainer').innerHTML = '<p style="text-align: center; color: #999;">Suallar yüklənə bilmədi</p>';
+                    return;
+                }
+
+                const faqs = await response.json();
+                console.log('Suallar:', faqs);
+                displayFaqs(faqs);
+            } catch (error) {
+                console.error('Sualları yükləmədə xəta:', error);
+                document.getElementById('faqContainer').innerHTML = '<p style="text-align: center; color: #999;">Suallar yüklənə bilmədi</p>';
+            }
+        }
+
+        function displayFaqs(faqs) {
+            const container = document.getElementById('faqContainer');
+            container.innerHTML = '';
+
+            if (!Array.isArray(faqs) || faqs.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999;">Sual tapılmadı</p>';
+                return;
+            }
+
+            faqs.forEach(faq => {
+                const item = document.createElement('div');
+                item.className = 'faq-item';
+                item.innerHTML = `
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>${faq.question}</span>
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>${faq.answer}</p>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function toggleFaq(button) {
+            const item = button.closest('.faq-item');
+            const answer = item.querySelector('.faq-answer');
+            const toggle = button.querySelector('.faq-toggle');
+
+            // Close all other FAQs
+            document.querySelectorAll('.faq-item').forEach(other => {
+                if (other !== item && other.classList.contains('active')) {
+                    other.classList.remove('active');
+                }
+            });
+
+            // Toggle current FAQ
+            item.classList.toggle('active');
+        }
+
+        // Load FAQs on page load
+        document.addEventListener('DOMContentLoaded', loadFaqs);
+
+        // Contact form submission handler
+        document.getElementById('contactForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                company: document.getElementById('company').value,
+                phone: document.getElementById('phone').value,
+                service: document.getElementById('service').value,
+                message: document.getElementById('message').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('Təşəkkür edirik! Mesajınız qəbul edildi. Tezliklə sizinlə əlaqə saxlayacağıq.');
+                    this.reset();
+                } else {
+                    alert('Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.');
+                }
+            } catch (error) {
+                console.error('Form submission error:', error);
+                alert('Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.');
+            }
+        });
+    </script>
+    <script src="js/script.js?v=3"></script>
+</body>
+
+</html>

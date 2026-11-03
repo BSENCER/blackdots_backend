@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>API Test</title>
+</head>
+
+<body>
+    <h1>API Test for BlackDots</h1>
+    <div id="status">Testing...</div>
+    <pre id="output"></pre>
+
+    <script>
+        const API_URL = 'https://blackdots-2.onrender.com/api';
+        const statusDiv = document.getElementById('status');
+        const outputPre = document.getElementById('output');
+
+        async function testFetch() {
+            try {
+                statusDiv.innerText = 'Fetching blogs...';
+                const response = await fetch(`${API_URL}/blogs`);
+                statusDiv.innerText = `Status: ${response.status} ${response.statusText}`;
+
+                if (response.ok) {
+                    const data = await response.json();
+                    statusDiv.innerText += ' - Success!';
+                    outputPre.innerText = JSON.stringify(data, null, 2);
+                } else {
+                    const errorText = await response.text();
+                    outputPre.innerText = `Error Body: ${errorText}`;
+                }
+            } catch (err) {
+                statusDiv.innerText = 'Fetch failed!';
+                outputPre.innerText = err.stack;
+            }
+        }
+
+        testFetch();
+    </script>
+</body>
+
+</html>
